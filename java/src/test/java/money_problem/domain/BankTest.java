@@ -1,45 +1,126 @@
 package money_problem.domain;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static money_problem.domain.Currency.*;
-import static money_problem.domain.DomainUtility.dollars;
-import static money_problem.domain.DomainUtility.euros;
+import static money_problem.domain.DomainUtility.*;
 import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 class BankTest {
-    private final Bank bank = Bank.withExchangeRate(EUR, USD, 1.2);
+    public static final Currency PIVOT_CURRENCY = EUR;
+    private final Bank bank = Bank.withPivotCurrency(PIVOT_CURRENCY);
 
-    @Test
-    @DisplayName("10 EUR -> USD = 12 USD")
-    void shouldConvertEuroToUsd() {
-        assertThat(bank.convert(euros(10), USD))
-                .containsOnRight(dollars(12));
+    @Nested
+    class Fail {
+        @Test
+        void whenMissingExchangeRate() {
+            assertThat(bank.convert(euros(10), KRW))
+                    .containsOnLeft("EUR->KRW");
+        }
+
+        @Test
+        void whenCannotConvertThroughPivotCurrency() {
+            assertThat(bank.addExchangeRate(USD, 1.2)
+                    .flatMap(newBank -> newBank.convert(koreanWons(10), USD)))
+                    .containsOnLeft("KRW->USD");
+        }
     }
 
-    @Test
-    @DisplayName("10 EUR -> EUR = 10 EUR")
-    void shouldConvertInSameCurrency() {
-        assertThat(bank.convert(euros(10), EUR))
-                .containsOnRight(euros(10));
+    @Nested
+    class ConvertShould {
+        @Nested
+        class Succeed {
+            @Test
+            @DisplayName("10 EUR -> USD = 12 USD")
+            void whenEuroToUsd() {
+                assertThat(bank.addExchangeRate(USD, 1.2)
+                        .flatMap(newBank -> newBank.convert(euros(10), USD)))
+                        .containsOnRight(dollars(12));
+            }
+
+            @Test
+            @DisplayName("10 EUR -> EUR = 10 EUR")
+            void whenInSameCurrency() {
+                assertThat(bank.convert(euros(10), EUR))
+                        .containsOnRight(euros(10));
+            }
+
+            @Test
+            @DisplayName("10 USD -> KRW = 3300 KRW")
+            void whenMoneyInAnotherCurrencyThanPivot() {
+                assertThat(bank.addExchangeRate(USD, 1.2)
+                        .flatMap(b -> b.addExchangeRate(KRW, 1344))
+                        .flatMap(b -> b.convert(dollars(10), KRW)))
+                        .containsOnRight(koreanWons(11200));
+            }
+
+            @Test
+            @DisplayName("Conversion with different exchange rates EUR to USD")
+            void whenExchangeRatesUpdated() {
+                var bankWithRate = bank.addExchangeRate(USD, 1.2);
+
+                assertThat(bankWithRate
+                        .flatMap(b -> b.convert(euros(10), USD)))
+                        .containsOnRight(dollars(12));
+
+                assertThat(bankWithRate
+                        .map(b -> b.addExchangeRate(EUR, USD, 1.3))
+                        .flatMap(b -> b.convert(euros(10), USD)))
+                        .containsOnRight(dollars(13));
+            }
+        }
     }
 
-    @Test
-    @DisplayName("Return a failure result in case of missing exchange rate")
-    void shouldReturnAFailingResultInCaseOfMissingExchangeRate() {
-        assertThat(bank.convert(euros(10), KRW))
-                .containsOnLeft("EUR->KRW");
-    }
+    @Nested
+    class AddShould {
+        @Nested
+        class Fail {
+            private static Stream<Arguments> failingExchangeRates() {
+                return Stream.of(
+                        Arguments.of(KRW, -1),
+                        Arguments.of(KRW, 0),
+                        Arguments.of(USD, 0),
+                        Arguments.of(USD, -2022)
+                );
+            }
 
-    @Test
-    @DisplayName("Conversion with different exchange rates EUR to USD")
-    void shouldConvertWithDifferentExchangeRates() {
-        assertThat(bank.convert(euros(10), USD))
-                .containsOnRight(dollars(12));
+            @Test
+            void whenCurrencyIsPivotCurrency() {
+                assertThat(bank.addExchangeRate(PIVOT_CURRENCY, 9))
+                        .containsOnLeft("Can not add an exchange rate for the pivot currency");
+            }
 
-        assertThat(bank.addExchangeRate(EUR, USD, 1.3)
-                .convert(euros(10), USD))
-                .containsOnRight(dollars(13));
+            @ParameterizedTest
+            @MethodSource("failingExchangeRates")
+            void whenExchangeRateIsLessOrEqualZero(Currency currency, double rate) {
+                assertThat(bank.addExchangeRate(currency, rate))
+                        .containsOnLeft("Exchange rate should be greater than 0");
+            }
+        }
+
+        @Nested
+        class Succeed {
+            private static Stream<Arguments> successExchangeRates() {
+                return Stream.of(
+                        Arguments.of(KRW, 1.298989888),
+                        Arguments.of(KRW, 345.090988),
+                        Arguments.of(USD, 0.00000001455)
+                );
+            }
+
+            @ParameterizedTest
+            @MethodSource("successExchangeRates")
+            void whenRateGreaterThan0(Currency currency, double rate) {
+                assertThat(bank.addExchangeRate(currency, rate))
+                        .isRight();
+            }
+        }
     }
 }
