@@ -21,12 +21,6 @@ public final class Bank {
         this(pivotCurrency, HashMap.empty());
     }
 
-    @Deprecated
-    public static Bank withExchangeRate(Currency from, Currency to, double rate) {
-        var bank = new Bank(Currency.EUR, HashMap.empty());
-        return bank.addExchangeRate(from, to, rate);
-    }
-
     public static Bank withPivotCurrency(Currency pivotCurrency) {
         return new Bank(pivotCurrency);
     }
@@ -62,14 +56,9 @@ public final class Bank {
     }
 
     private Bank addMultiplierAndDividerExchangeRate(Currency to, double rate) {
-        return new Bank(
-                pivotCurrency,
+        return new Bank(pivotCurrency,
                 exchangeRates.put(keyFor(pivotCurrency, to), rate)
                         .put(keyFor(to, pivotCurrency), 1 / rate));
-    }
-
-    public Bank addExchangeRate(Currency from, Currency to, double rate) {
-        return new Bank(pivotCurrency, exchangeRates.put(keyFor(from, to), rate));
     }
 
     public Either<String, Money> convert(Money money, Currency toCurrency) {
@@ -84,6 +73,10 @@ public final class Bank {
                 || canConvertThroughPivotCurrency(money.currency(), to);
     }
 
+    private boolean isSameCurrency(Currency money, Currency to) {
+        return money == to;
+    }
+
     private boolean canConvertDirectly(Currency money, Currency to) {
         return exchangeRates.containsKey(keyFor(money, to));
     }
@@ -91,10 +84,6 @@ public final class Bank {
     private boolean canConvertThroughPivotCurrency(Currency from, Currency to) {
         return exchangeRates.containsKey(keyFor(pivotCurrency, from))
                 && exchangeRates.containsKey(keyFor(pivotCurrency, to));
-    }
-
-    private boolean isSameCurrency(Currency money, Currency to) {
-        return money == to;
     }
 
     private Money convertSafely(Money money, Currency to) {

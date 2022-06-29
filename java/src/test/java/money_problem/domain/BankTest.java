@@ -71,7 +71,7 @@ class BankTest {
                         .containsOnRight(dollars(12));
 
                 assertThat(bankWithRate
-                        .map(b -> b.addExchangeRate(EUR, USD, 1.3))
+                        .flatMap(b -> b.addExchangeRate(USD, 1.3))
                         .flatMap(b -> b.convert(euros(10), USD)))
                         .containsOnRight(dollars(13));
             }
