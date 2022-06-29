@@ -13,8 +13,10 @@ class PortfolioTest {
 
     @BeforeEach
     void setup() {
-        bank = Bank.withExchangeRate(EUR, USD, 1.2)
-                .addExchangeRate(USD, KRW, 1100);
+        bank = Bank.withPivotCurrency(EUR)
+                .addExchangeRate(USD, 1.2)
+                .flatMap(b -> b.addExchangeRate(KRW, 1344))
+                .get();
     }
 
     @Test
@@ -42,7 +44,7 @@ class PortfolioTest {
     }
 
     @Test
-    @DisplayName("1 USD + 1100 KRW = 2200 KRW")
+    @DisplayName("1 USD + 1100 KRW = 2220 KRW")
     void shouldAddMoneyInDollarsAndKoreanWons() {
         var portfolio = portfolioWith(
                 dollars(1),
@@ -50,7 +52,7 @@ class PortfolioTest {
         );
 
         assertThat(portfolio.evaluate(bank, KRW))
-                .containsOnRight(koreanWons(2200));
+                .containsOnRight(koreanWons(2220));
     }
 
     @Test
@@ -69,13 +71,14 @@ class PortfolioTest {
     @Test
     @DisplayName("Return a failure result in case of missing exchange rates")
     void shouldReturnAFailingResultInCaseOfMissingExchangeRates() {
+        var emptyBank = Bank.withPivotCurrency(USD);
         var portfolio = portfolioWith(
                 euros(1),
                 dollars(1),
                 koreanWons(1)
         );
 
-        assertThat(portfolio.evaluate(bank, EUR))
+        assertThat(portfolio.evaluate(emptyBank, EUR))
                 .containsOnLeft("Missing exchange rate(s): [USD->EUR],[KRW->EUR]");
     }
 }
