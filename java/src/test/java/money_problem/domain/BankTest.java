@@ -18,23 +18,23 @@ class BankTest {
     private final Bank bank = Bank.withPivotCurrency(PIVOT_CURRENCY);
 
     @Nested
-    class Fail {
-        @Test
-        void whenMissingExchangeRate() {
-            assertThat(bank.convert(euros(10), KRW))
-                    .containsOnLeft("EUR->KRW");
-        }
-
-        @Test
-        void whenCannotConvertThroughPivotCurrency() {
-            assertThat(bank.addExchangeRate(USD, 1.2)
-                    .flatMap(newBank -> newBank.convert(koreanWons(10), USD)))
-                    .containsOnLeft("KRW->USD");
-        }
-    }
-
-    @Nested
     class ConvertShould {
+        @Nested
+        class Fail {
+            @Test
+            void whenMissingExchangeRate() {
+                assertThat(bank.convert(euros(10), KRW))
+                        .containsOnLeft("EUR->KRW");
+            }
+
+            @Test
+            void whenCannotConvertThroughPivotCurrency() {
+                assertThat(bank.addExchangeRate(USD, 1.2)
+                        .flatMap(newBank -> newBank.convert(koreanWons(10), USD)))
+                        .containsOnLeft("KRW->USD");
+            }
+        }
+
         @Nested
         class Succeed {
             @Test
