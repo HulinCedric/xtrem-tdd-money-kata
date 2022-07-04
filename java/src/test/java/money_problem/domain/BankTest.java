@@ -1,5 +1,6 @@
 package money_problem.domain;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import java.util.stream.Stream;
 
 import static money_problem.domain.Currency.*;
 import static money_problem.domain.DomainUtility.*;
+import static org.assertj.core.api.Assertions.offset;
 import static org.assertj.vavr.api.VavrAssertions.assertThat;
 
 class BankTest {
@@ -59,6 +61,24 @@ class BankTest {
                         .flatMap(b -> b.addExchangeRate(KRW, 1344))
                         .flatMap(b -> b.convert(dollars(10), KRW)))
                         .containsOnRight(koreanWons(11200));
+            }
+
+            @Test
+            @DisplayName("-2 USD -> EUR = -1.667 EUR")
+            void whenNegativeAmount() {
+                assertThat(bank.addExchangeRate(USD, 1.2)
+                        .flatMap(b -> b.convert(dollars(-2), EUR)))
+                        .hasRightValueSatisfying(right ->
+                                Assertions.assertThat(right.amount())
+                                        .isCloseTo(-1.667, offset(0.001)));
+            }
+
+            @Test
+            @DisplayName("0 USD -> EUR = 0 EUR")
+            void whenZero() {
+                assertThat(bank.addExchangeRate(USD, 1.2)
+                        .flatMap(b -> b.convert(dollars(0), EUR)))
+                        .containsOnRight(euros(0));
             }
 
             @Test
