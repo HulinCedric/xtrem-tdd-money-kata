@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using money_problem.Domain;
 using Xunit;
 
@@ -60,33 +59,22 @@ public class PortfolioShould
         // Assert
         evaluation.Should().Be(21.8);
     }
-}
 
-public class Portfolio
-{
-    private readonly Dictionary<Currency, double> moneys;
-
-    public Portfolio()
-        => moneys = new Dictionary<Currency, double>();
-
-    public void Add(double amount, Currency currency)
+    [Fact(DisplayName = "Throws a MissingExchangeRatesException in case of missing exchange rates")]
+    public void ThrowAMissingExchangeRatesException()
     {
-        if (!moneys.ContainsKey(currency))
-            moneys.Add(currency, 0);
+        // Arrange
+        var portfolio = new Portfolio();
+        portfolio.Add(1, Currency.EUR);
+        portfolio.Add(1, Currency.USD);
+        portfolio.Add(1, Currency.KRW);
 
-        moneys[currency] += amount;
-    }
+        // Act
+        var act = () => portfolio.Evaluate(bank, Currency.EUR);
 
-    public double Evaluate(Bank bank, Currency currency)
-    {
-        var totalAmount = 0d;
-        foreach (var (moneyCurrency, moneyAmount) in moneys)
-        {
-            var convertedAmount = bank.Convert(moneyAmount, moneyCurrency, currency);
-
-            totalAmount = MoneyCalculator.Add(totalAmount, currency, convertedAmount);
-        }
-
-        return totalAmount;
+        // Assert
+        act.Should()
+            .ThrowExactly<MissingExchangeRatesException>()
+            .WithMessage("Missing exchange rate(s): [USD->EUR],[KRW->EUR]");
     }
 }
