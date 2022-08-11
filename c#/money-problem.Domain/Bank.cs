@@ -21,18 +21,18 @@ namespace money_problem.Domain
         private static string KeyFor(Currency from, Currency to)
             => $"{from}->{to}";
 
-        public double Convert(Money money, Currency to)
-            => Convert(money.Amount, money.Currency, to);
+        public double Convert(Money from, Currency to)
+            => CanConvert(from.Currency, to)
+                   ? ConvertSafely(from, to)
+                   : throw new MissingExchangeRateException(from.Currency, to);
 
         public double Convert(double amount, Currency from, Currency to)
-            => CanConvert(from, to)
-                   ? ConvertSafely(amount, from, to)
-                   : throw new MissingExchangeRateException(from, to);
+            => Convert(new Money(amount, from), to);
 
-        private double ConvertSafely(double amount, Currency from, Currency to)
-            => to == from
-                   ? amount
-                   : amount * exchangeRates[KeyFor(from, to)];
+        private double ConvertSafely(Money from, Currency to)
+            => to == from.Currency
+                   ? from.Amount
+                   : from.Amount * exchangeRates[KeyFor(from.Currency, to)];
 
         private bool CanConvert(Currency from, Currency to)
             => from == to || exchangeRates.ContainsKey(KeyFor(from, to));
