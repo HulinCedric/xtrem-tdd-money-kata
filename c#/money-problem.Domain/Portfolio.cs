@@ -15,10 +15,10 @@ public class Portfolio
         var totalAmount = 0d;
         var missingExchangeRates = new List<MissingExchangeRateException>();
 
-        foreach (var (moneyAmount, moneyCurrency) in moneys)
+        foreach (var money in moneys)
             try
             {
-                var convertedAmount = bank.Convert(moneyAmount, moneyCurrency, currency);
+                var convertedAmount = bank.Convert(money, currency);
 
                 totalAmount += convertedAmount;
             }

@@ -26,9 +26,6 @@ namespace money_problem.Domain
                    ? ConvertSafely(from, to)
                    : throw new MissingExchangeRateException(from.Currency, to);
 
-        public double Convert(double amount, Currency from, Currency to)
-            => Convert(new Money(amount, from), to);
-
         private double ConvertSafely(Money from, Currency to)
             => to == from.Currency
                    ? from.Amount
