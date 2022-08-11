@@ -1,3 +1,4 @@
+// ReSharper disable InconsistentNaming
 namespace money_problem.Domain
 {
     public enum Currency

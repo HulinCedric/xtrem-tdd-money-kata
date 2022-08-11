@@ -1,12 +1,11 @@
-using System.Collections.Immutable;
-
 namespace money_problem.Domain
 {
     public sealed class Bank
     {
-        private readonly Dictionary<string, double> _exchangeRates;
+        private readonly Dictionary<string, double> exchangeRates;
 
-        private Bank(Dictionary<string, double> exchangeRates) => _exchangeRates = exchangeRates;
+        private Bank(Dictionary<string, double> exchangeRates)
+            => this.exchangeRates = exchangeRates;
 
         public static Bank WithExchangeRate(Currency from, Currency to, double rate)
         {
@@ -16,22 +15,23 @@ namespace money_problem.Domain
             return bank;
         }
 
-        public void AddExchangeRate(Currency from, Currency to, double rate) 
-            => _exchangeRates[KeyFor(from, to)] =  rate;
+        public void AddExchangeRate(Currency from, Currency to, double rate)
+            => exchangeRates[KeyFor(from, to)] = rate;
 
-        private static string KeyFor(Currency from, Currency to) => $"{from}->{to}";
+        private static string KeyFor(Currency from, Currency to)
+            => $"{from}->{to}";
 
-        public double Convert(double amount, Currency from, Currency to) =>
-            CanConvert(from, to)
-                ? ConvertSafely(amount, from, to)
-                : throw new MissingExchangeRateException(from, to);
+        public double Convert(double amount, Currency from, Currency to)
+            => CanConvert(from, to)
+                   ? ConvertSafely(amount, from, to)
+                   : throw new MissingExchangeRateException(from, to);
 
-        private double ConvertSafely(double amount, Currency from, Currency to) =>
-            to == from
-                ? amount
-                : amount * _exchangeRates[KeyFor(from, to)];
+        private double ConvertSafely(double amount, Currency from, Currency to)
+            => to == from
+                   ? amount
+                   : amount * exchangeRates[KeyFor(from, to)];
 
-        private bool CanConvert(Currency from, Currency to) =>
-            from == to || _exchangeRates.ContainsKey(KeyFor(from, to));
+        private bool CanConvert(Currency from, Currency to)
+            => from == to || exchangeRates.ContainsKey(KeyFor(from, to));
     }
 }
