@@ -11,7 +11,7 @@ namespace money_problem.Tests
 
         [Fact(DisplayName = "10 EUR -> USD = 12 USD")]
         public void ConvertEuroToUsd()
-            => bank.Convert(10, EUR, USD)
+            => bank.Convert(new Money(10, EUR), USD)
                 .Should()
                 .Be(12);
 
