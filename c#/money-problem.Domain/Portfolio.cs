@@ -10,7 +10,7 @@ public class Portfolio
     public void Add(Money money)
         => moneys.Add(money);
 
-    public double Evaluate(Bank bank, Currency currency)
+    public Money Evaluate(Bank bank, Currency currency)
     {
         var totalAmount = 0d;
         var missingExchangeRates = new List<MissingExchangeRateException>();
@@ -30,6 +30,6 @@ public class Portfolio
         if (missingExchangeRates.Any())
             throw new MissingExchangeRatesException(missingExchangeRates);
 
-        return totalAmount;
+        return new Money(totalAmount, currency);
     }
 }

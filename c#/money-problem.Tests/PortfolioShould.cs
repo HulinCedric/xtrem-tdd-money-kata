@@ -27,7 +27,7 @@ public class PortfolioShould
         var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(17);
+        evaluation.Should().Be(new Money(17, USD));
     }
 
     [Fact(DisplayName = "1 USD + 1100 KRW = 2200 KRW")]
@@ -42,7 +42,7 @@ public class PortfolioShould
         var evaluation = portfolio.Evaluate(bank, KRW);
 
         // Assert
-        evaluation.Should().Be(2200);
+        evaluation.Should().Be(new Money(2200, KRW));
     }
 
     [Fact(DisplayName = "5 USD + 10 EUR + 4 EUR = 21.8 USD")]
@@ -58,7 +58,7 @@ public class PortfolioShould
         var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(21.8);
+        evaluation.Should().Be(new Money(21.8, USD));
     }
 
     [Fact(DisplayName = "5 USD + 10 USD = 15 USD")]
@@ -73,7 +73,7 @@ public class PortfolioShould
         var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(15);
+        evaluation.Should().Be(new Money(15, USD));
     }
 
     [Fact(DisplayName = "Throws a MissingExchangeRatesException in case of missing exchange rates")]
