@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using money_problem.Domain;
 using Xunit;
+using static money_problem.Domain.Currency;
 
 namespace money_problem.Tests;
 
@@ -10,8 +11,8 @@ public class PortfolioShould
 
     public PortfolioShould()
     {
-        bank = Bank.WithExchangeRate(Currency.EUR, Currency.USD, 1.2);
-        bank.AddExchangeRate(Currency.USD, Currency.KRW, 1100);
+        bank = Bank.WithExchangeRate(EUR, USD, 1.2);
+        bank.AddExchangeRate(USD, KRW, 1100);
     }
 
     [Fact(DisplayName = "5 USD + 10 EUR = 17 USD")]
@@ -19,11 +20,11 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(5, Currency.USD);
-        portfolio.Add(10, Currency.EUR);
+        portfolio.Add(5, USD);
+        portfolio.Add(10, EUR);
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, Currency.USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
         evaluation.Should().Be(17);
@@ -34,11 +35,11 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(1, Currency.USD);
-        portfolio.Add(1100, Currency.KRW);
+        portfolio.Add(1, USD);
+        portfolio.Add(1100, KRW);
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, Currency.KRW);
+        var evaluation = portfolio.Evaluate(bank, KRW);
 
         // Assert
         evaluation.Should().Be(2200);
@@ -49,12 +50,12 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(5, Currency.USD);
-        portfolio.Add(10, Currency.EUR);
-        portfolio.Add(4, Currency.EUR);
+        portfolio.Add(5, USD);
+        portfolio.Add(10, EUR);
+        portfolio.Add(4, EUR);
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, Currency.USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
         evaluation.Should().Be(21.8);
@@ -65,11 +66,11 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(5, Currency.USD);
-        portfolio.Add(10, Currency.USD);
+        portfolio.Add(5, USD);
+        portfolio.Add(10, USD);
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, Currency.USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
         evaluation.Should().Be(15);
@@ -80,12 +81,12 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(1, Currency.EUR);
-        portfolio.Add(1, Currency.USD);
-        portfolio.Add(1, Currency.KRW);
+        portfolio.Add(1, EUR);
+        portfolio.Add(1, USD);
+        portfolio.Add(1, KRW);
 
         // Act
-        var act = () => portfolio.Evaluate(bank, Currency.EUR);
+        var act = () => portfolio.Evaluate(bank, EUR);
 
         // Assert
         act.Should()
