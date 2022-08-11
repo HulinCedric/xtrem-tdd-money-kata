@@ -7,6 +7,9 @@ public class Portfolio
     public Portfolio()
         => moneys = new Dictionary<Currency, double>();
 
+    public void Add(Money money)
+        => Add(money.Amount, money.Currency);
+
     public void Add(double amount, Currency currency)
     {
         if (!moneys.ContainsKey(currency))

@@ -66,8 +66,8 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(5, USD);
-        portfolio.Add(10, USD);
+        portfolio.Add(new Money(5, USD));
+        portfolio.Add(new Money(10, USD));
 
         // Act
         var evaluation = portfolio.Evaluate(bank, USD);
