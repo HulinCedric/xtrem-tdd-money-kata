@@ -20,8 +20,8 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(5, USD);
-        portfolio.Add(10, EUR);
+        portfolio.Add(new Money(5, USD));
+        portfolio.Add(new Money(10, EUR));
 
         // Act
         var evaluation = portfolio.Evaluate(bank, USD);
@@ -35,8 +35,8 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(1, USD);
-        portfolio.Add(1100, KRW);
+        portfolio.Add(new Money(1, USD));
+        portfolio.Add(new Money(1100, KRW));
 
         // Act
         var evaluation = portfolio.Evaluate(bank, KRW);
@@ -50,9 +50,9 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(5, USD);
-        portfolio.Add(10, EUR);
-        portfolio.Add(4, EUR);
+        portfolio.Add(new Money(5, USD));
+        portfolio.Add(new Money(10, EUR));
+        portfolio.Add(new Money(4, EUR));
 
         // Act
         var evaluation = portfolio.Evaluate(bank, USD);
@@ -81,9 +81,9 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(1, EUR);
-        portfolio.Add(1, USD);
-        portfolio.Add(1, KRW);
+        portfolio.Add(new Money(1, EUR));
+        portfolio.Add(new Money(1, USD));
+        portfolio.Add(new Money(1, KRW));
 
         // Act
         var act = () => portfolio.Evaluate(bank, EUR);

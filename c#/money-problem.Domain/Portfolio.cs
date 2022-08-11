@@ -10,9 +10,6 @@ public class Portfolio
     public void Add(Money money)
         => moneys.Add(money);
 
-    public void Add(double amount, Currency currency)
-        => Add(new Money(amount, currency));
-
     public double Evaluate(Bank bank, Currency currency)
     {
         var totalAmount = 0d;
