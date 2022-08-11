@@ -60,6 +60,21 @@ public class PortfolioShould
         evaluation.Should().Be(21.8);
     }
 
+    [Fact(DisplayName = "5 USD + 10 USD = 15 USD")]
+    public void AddMoneyInSameCurrency()
+    {
+        // Arrange
+        var portfolio = new Portfolio();
+        portfolio.Add(5, Currency.USD);
+        portfolio.Add(10, Currency.USD);
+
+        // Act
+        var evaluation = portfolio.Evaluate(bank, Currency.USD);
+
+        // Assert
+        evaluation.Should().Be(15);
+    }
+
     [Fact(DisplayName = "Throws a MissingExchangeRatesException in case of missing exchange rates")]
     public void ThrowAMissingExchangeRatesException()
     {

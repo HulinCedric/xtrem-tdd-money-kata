@@ -7,15 +7,6 @@ namespace money_problem.Tests
 {
     public class MoneyCalculatorShould
     {
-        [Fact(DisplayName = "5 USD + 10 USD = 15 USD")]
-        public void AddInUsd()
-        {
-            MoneyCalculator
-                .Add(5, USD, 10)
-                .Should()
-                .Be(15);
-        }
-        
         [Fact(DisplayName = "10 EUR x 2 = 20 EUR")]
         public void MultiplyInEuros()
         {
