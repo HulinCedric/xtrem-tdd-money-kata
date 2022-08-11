@@ -26,7 +26,7 @@ public class Portfolio
             {
                 var convertedAmount = bank.Convert(moneyAmount, moneyCurrency, currency);
 
-                totalAmount = MoneyCalculator.Add(totalAmount, currency, convertedAmount);
+                totalAmount += convertedAmount;
             }
             catch (MissingExchangeRateException missingExchangeRate)
             {
