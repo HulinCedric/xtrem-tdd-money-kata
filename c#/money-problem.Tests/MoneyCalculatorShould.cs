@@ -5,7 +5,7 @@ using static money_problem.Domain.Currency;
 
 namespace money_problem.Tests
 {
-    public class MoneyShould
+    public class MoneyCalculatorShould
     {
         [Fact(DisplayName = "5 USD + 10 USD = 15 USD")]
         public void AddInUsd()
