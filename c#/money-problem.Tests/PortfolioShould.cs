@@ -20,14 +20,14 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(new Money(5, USD));
-        portfolio.Add(new Money(10, EUR));
+        portfolio.Add(5d.Dollars());
+        portfolio.Add(10d.Euros());
 
         // Act
         var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(new Money(17, USD));
+        evaluation.Should().Be(17d.Dollars());
     }
 
     [Fact(DisplayName = "1 USD + 1100 KRW = 2200 KRW")]
@@ -35,14 +35,14 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(new Money(1, USD));
-        portfolio.Add(new Money(1100, KRW));
+        portfolio.Add(1d.Dollars());
+        portfolio.Add(1100d.KoreanWons());
 
         // Act
         var evaluation = portfolio.Evaluate(bank, KRW);
 
         // Assert
-        evaluation.Should().Be(new Money(2200, KRW));
+        evaluation.Should().Be(2200d.KoreanWons());
     }
 
     [Fact(DisplayName = "5 USD + 10 EUR + 4 EUR = 21.8 USD")]
@@ -50,15 +50,15 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(new Money(5, USD));
-        portfolio.Add(new Money(10, EUR));
-        portfolio.Add(new Money(4, EUR));
+        portfolio.Add(5d.Dollars());
+        portfolio.Add(10d.Euros());
+        portfolio.Add(4d.Euros());
 
         // Act
         var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(new Money(21.8, USD));
+        evaluation.Should().Be(21.8d.Dollars());
     }
 
     [Fact(DisplayName = "5 USD + 10 USD = 15 USD")]
@@ -66,14 +66,14 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(new Money(5, USD));
-        portfolio.Add(new Money(10, USD));
+        portfolio.Add(5d.Dollars());
+        portfolio.Add(10d.Dollars());
 
         // Act
         var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(new Money(15, USD));
+        evaluation.Should().Be(15d.Dollars());
     }
 
     [Fact(DisplayName = "Throws a MissingExchangeRatesException in case of missing exchange rates")]
@@ -81,9 +81,9 @@ public class PortfolioShould
     {
         // Arrange
         var portfolio = new Portfolio();
-        portfolio.Add(new Money(1, EUR));
-        portfolio.Add(new Money(1, USD));
-        portfolio.Add(new Money(1, KRW));
+        portfolio.Add(1d.Euros());
+        portfolio.Add(1d.Dollars());
+        portfolio.Add(1d.KoreanWons());
 
         // Act
         var act = () => portfolio.Evaluate(bank, EUR);

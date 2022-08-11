@@ -1,7 +1,6 @@
 using FluentAssertions;
 using money_problem.Domain;
 using Xunit;
-using static money_problem.Domain.Currency;
 
 namespace money_problem.Tests
 {
@@ -9,16 +8,16 @@ namespace money_problem.Tests
     {
         [Fact(DisplayName = "10 EUR x 2 = 20 EUR")]
         public void MultiplyInEuros()
-            => new Money(10, EUR)
+            => 10d.Euros()
                 .Times(2)
                 .Should()
-                .Be(new Money(20d, EUR));
+                .Be(20d.Euros());
 
         [Fact(DisplayName = "4002 KRW / 4 = 1000.5 KRW")]
         public void DivideInKoreanWons()
-            => new Money(4002, KRW)
+            => 4002d.KoreanWons()
                 .Divide(4)
                 .Should()
-                .Be(new Money(1000.5d, KRW));
+                .Be(1000.5d.KoreanWons());
     }
 }
