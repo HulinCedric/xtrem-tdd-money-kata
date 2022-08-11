@@ -30,7 +30,8 @@ namespace money_problem.Tests
         {
             _bank.Invoking(_ => _.Convert(10, EUR, KRW))
                 .Should()
-                .ThrowExactly<MissingExchangeRateException>();
+                .ThrowExactly<MissingExchangeRateException>()
+                .WithMessage($"{EUR}->{KRW}");
         }
 
         [Fact(DisplayName = "Conversion with different exchange rates EUR -> USD")]
@@ -41,7 +42,7 @@ namespace money_problem.Tests
                 .Be(12);
 
             _bank.AddExchangeRate(EUR, USD, 1.3);
-            
+
             _bank.Convert(10, EUR, USD)
                 .Should()
                 .Be(13);
