@@ -44,6 +44,22 @@ public class PortfolioShould
         // Assert
         evaluation.Should().Be(2200);
     }
+
+    [Fact(DisplayName = "5 USD + 10 EUR + 4 EUR = 21.8 USD")]
+    public void AddMoneyInDollarAndMultipleInEuros()
+    {
+        // Arrange
+        var portfolio = new Portfolio();
+        portfolio.Add(5, Currency.USD);
+        portfolio.Add(10, Currency.EUR);
+        portfolio.Add(4, Currency.EUR);
+
+        // Act
+        var evaluation = portfolio.Evaluate(bank, Currency.USD);
+
+        // Assert
+        evaluation.Should().Be(21.8);
+    }
 }
 
 public class Portfolio
@@ -54,7 +70,12 @@ public class Portfolio
         => moneys = new Dictionary<Currency, double>();
 
     public void Add(double amount, Currency currency)
-        => moneys.Add(currency, amount);
+    {
+        if (!moneys.ContainsKey(currency))
+            moneys.Add(currency, 0);
+
+        moneys[currency] += amount;
+    }
 
     public double Evaluate(Bank bank, Currency currency)
     {
