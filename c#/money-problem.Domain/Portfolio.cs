@@ -2,29 +2,23 @@
 
 public class Portfolio
 {
-    private readonly Dictionary<Currency, double> moneys;
+    private readonly List<Money> moneys;
 
     public Portfolio()
-        => moneys = new Dictionary<Currency, double>();
+        => moneys = new List<Money>();
 
     public void Add(Money money)
-        => Add(money.Amount, money.Currency);
+        => moneys.Add(money);
 
     public void Add(double amount, Currency currency)
-    {
-        if (!moneys.ContainsKey(currency))
-            moneys.Add(currency, 0);
-
-        moneys[currency] += amount;
-    }
+        => Add(new Money(amount, currency));
 
     public double Evaluate(Bank bank, Currency currency)
     {
         var totalAmount = 0d;
         var missingExchangeRates = new List<MissingExchangeRateException>();
 
-        foreach (var (moneyCurrency, moneyAmount) in moneys)
-        {
+        foreach (var (moneyAmount, moneyCurrency) in moneys)
             try
             {
                 var convertedAmount = bank.Convert(moneyAmount, moneyCurrency, currency);
@@ -35,7 +29,6 @@ public class Portfolio
             {
                 missingExchangeRates.Add(missingExchangeRate);
             }
-        }
 
         if (missingExchangeRates.Any())
             throw new MissingExchangeRatesException(missingExchangeRates);
