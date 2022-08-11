@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using money_problem.Domain;
 using Xunit;
 
@@ -47,11 +48,24 @@ public class PortfolioShould
 
 public class Portfolio
 {
+    private readonly Dictionary<Currency, double> moneys;
+
+    public Portfolio()
+        => moneys = new Dictionary<Currency, double>();
+
     public void Add(double amount, Currency currency)
-    {
-    }
+        => moneys.Add(currency, amount);
 
     public double Evaluate(Bank bank, Currency currency)
-        => currency == Currency.USD ? 17 :
-           currency == Currency.KRW ? 2200 : default;
+    {
+        var totalAmount = 0d;
+        foreach (var (moneyCurrency, moneyAmount) in moneys)
+        {
+            var convertedAmount = bank.Convert(moneyAmount, moneyCurrency, currency);
+
+            totalAmount = MoneyCalculator.Add(totalAmount, currency, convertedAmount);
+        }
+
+        return totalAmount;
+    }
 }
