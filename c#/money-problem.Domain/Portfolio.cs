@@ -20,7 +20,7 @@ public class Portfolio
         return Money(conversionResults, currency);
     }
 
-    private static Money Money(ConversionResults conversionResults, Currency currency)
+    internal Money Money(ConversionResults conversionResults, Currency currency)
     {
         var totalAmount = conversionResults
             .Select(result => result.Money)
@@ -30,7 +30,7 @@ public class Portfolio
         return new Money(totalAmount, currency);
     }
 
-    private static MissingExchangeRatesException Error(ConversionResults conversionResults)
+    internal MissingExchangeRatesException Error(ConversionResults conversionResults)
     {
         var missingExchangeRates = conversionResults
             .Where(result => result.IsFailure)
@@ -40,7 +40,7 @@ public class Portfolio
         return new MissingExchangeRatesException(missingExchangeRates);
     }
 
-    private static bool IsFailure(ConversionResults conversionResults)
+    internal bool IsFailure(ConversionResults conversionResults)
         => conversionResults.Any(result => result.IsFailure);
 
     private ConversionResults ConvertMoneys(Bank bank, Currency currency)
