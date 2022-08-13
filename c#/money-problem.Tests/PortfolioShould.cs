@@ -93,4 +93,17 @@ public class PortfolioShould
             .ThrowExactly<MissingExchangeRatesException>()
             .WithMessage("Missing exchange rate(s): [USD->EUR],[KRW->EUR]");
     }
+
+    [Fact(DisplayName = "Empty = 0 USD")]
+    public void ReturnZeroDollarWhenEmpty()
+    {
+        // Arrange
+        var portfolio = new Portfolio();
+
+        // Act
+        var evaluation = portfolio.Evaluate(bank, USD);
+
+        // Assert
+        evaluation.Should().Be(0d.Dollars());
+    }
 }
