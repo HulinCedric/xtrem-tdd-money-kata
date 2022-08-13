@@ -24,8 +24,7 @@ internal class ConversionResults
     public Money Money
         => new(
             results
-                .Select(result => result.Money)
-                .Select(money => money.Amount)
-                .Sum(),
+                .Where(result => result.IsSuccess)
+                .Sum(result => result.Money.Amount),
             toCurrency);
 }

@@ -11,12 +11,15 @@ public readonly struct ConversionResult
 
     private ConversionResult(MissingExchangeRateException exception)
         => result = Result.Failure<Money, MissingExchangeRateException>(exception);
-
-    public MissingExchangeRateException Error
-        => result.Error;
+    
+    public bool IsSuccess
+        => result.IsSuccess;
 
     public bool IsFailure
         => result.IsFailure;
+
+    public MissingExchangeRateException Error
+        => result.Error;
 
     public Money Money
         => result.Value;
