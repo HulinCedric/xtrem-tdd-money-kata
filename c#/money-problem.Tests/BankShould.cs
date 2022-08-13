@@ -35,9 +35,8 @@ namespace money_problem.Tests
                 .Should()
                 .Be(12d.Dollars());
 
-            bank.AddExchangeRate(EUR, USD, 1.3);
-
-            bank.Convert(10d.Euros(), USD)
+            bank.AddExchangeRate(EUR, USD, 1.3)
+                .Convert(10d.Euros(), USD)
                 .Should()
                 .Be(13d.Dollars());
         }

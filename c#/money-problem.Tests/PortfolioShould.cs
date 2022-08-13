@@ -7,13 +7,9 @@ namespace money_problem.Tests;
 
 public class PortfolioShould
 {
-    private readonly Bank bank;
-
-    public PortfolioShould()
-    {
-        bank = Bank.WithExchangeRate(EUR, USD, 1.2);
-        bank.AddExchangeRate(USD, KRW, 1100);
-    }
+    private readonly Bank bank = Bank
+        .WithExchangeRate(EUR, USD, 1.2)
+        .AddExchangeRate(USD, KRW, 1100);
 
     [Fact(DisplayName = "5 USD + 10 EUR = 17 USD")]
     public void AddMoneyInDollarAndEuro()
