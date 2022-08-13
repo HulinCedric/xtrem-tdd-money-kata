@@ -15,33 +15,10 @@ public class Portfolio
     public Money Evaluate(Bank bank, Currency currency)
     {
         var conversionResults = ConvertMoneys(bank, currency);
-        if (IsFailure(conversionResults))
-            throw Error(conversionResults);
-        return Money(conversionResults, currency);
+        if (conversionResults.IsFailure())
+            throw conversionResults.Error();
+        return conversionResults.Money(currency);
     }
-
-    internal Money Money(ConversionResults conversionResults, Currency currency)
-    {
-        var totalAmount = conversionResults
-            .Select(result => result.Money)
-            .Select(money => money.Amount)
-            .Sum();
-
-        return new Money(totalAmount, currency);
-    }
-
-    internal MissingExchangeRatesException Error(ConversionResults conversionResults)
-    {
-        var missingExchangeRates = conversionResults
-            .Where(result => result.IsFailure)
-            .Select(failure => failure.Error)
-            .ToList();
-
-        return new MissingExchangeRatesException(missingExchangeRates);
-    }
-
-    internal bool IsFailure(ConversionResults conversionResults)
-        => conversionResults.Any(result => result.IsFailure);
 
     private ConversionResults ConvertMoneys(Bank bank, Currency currency)
         => new(
@@ -66,9 +43,31 @@ public class Portfolio
 internal class ConversionResults
     : List<ConversionResult>
 {
-    public ConversionResults(IEnumerable<ConversionResult> results): base(results)
+    public ConversionResults(IEnumerable<ConversionResult> results) : base(results)
     {
-        
+    }
+
+    public Money Money(Currency currency)
+    {
+        var totalAmount = this
+            .Select(result => result.Money)
+            .Select(money => money.Amount)
+            .Sum();
+
+        return new Money(totalAmount, currency);
+    }
+
+    public bool IsFailure()
+        => this.Any(result => result.IsFailure);
+
+    public MissingExchangeRatesException Error()
+    {
+        var missingExchangeRates = this
+            .Where(result => result.IsFailure)
+            .Select(failure => failure.Error)
+            .ToList();
+
+        return new MissingExchangeRatesException(missingExchangeRates);
     }
 }
 
