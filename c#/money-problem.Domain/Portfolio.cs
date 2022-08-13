@@ -14,10 +14,10 @@ public class Portfolio
 
     public Money Evaluate(Bank bank, Currency currency)
     {
-        var conversionResults = ConvertMoneys(bank, currency);
-        if (conversionResults.IsFailure())
-            throw conversionResults.Error();
-        return conversionResults.Money();
+        var results = ConvertMoneys(bank, currency);
+        return results.IsFailure
+                   ? throw results.Error
+                   : results.Money;
     }
 
     private ConversionResults ConvertMoneys(Bank bank, Currency currency)
@@ -52,23 +52,23 @@ internal class ConversionResults
         this.results = results.ToList();
     }
 
-    public Money Money()
+    public MissingExchangeRatesException Error
+        => new(
+            results
+                .Where(result => result.IsFailure)
+                .Select(failure => failure.Error)
+                .ToList());
+
+    public bool IsFailure
+        => results.Any(result => result.IsFailure);
+
+    public Money Money
         => new(
             results
                 .Select(result => result.Money)
                 .Select(money => money.Amount)
                 .Sum(),
             toCurrency);
-
-    public bool IsFailure()
-        => results.Any(result => result.IsFailure);
-
-    public MissingExchangeRatesException Error()
-        => new(
-            results
-                .Where(result => result.IsFailure)
-                .Select(failure => failure.Error)
-                .ToList());
 }
 
 public readonly struct ConversionResult
