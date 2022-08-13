@@ -27,24 +27,50 @@ public class Portfolio
             throw new MissingExchangeRatesException(missingExchangeRates);
 
         var totalAmount = conversionResults
-            .Select(result => result.Value)
+            .Select(result => result.Money)
             .Select(money => money.Amount)
             .Sum();
 
         return new Money(totalAmount, currency);
     }
 
-    private static Result<Money, MissingExchangeRateException> Convert(Bank bank, Currency currency, Money money)
+    private static ConversionResult Convert(Bank bank, Currency currency, Money money)
     {
         try
         {
             var convertedMoney = bank.Convert(money, currency);
 
-            return Result.Success<Money, MissingExchangeRateException>(convertedMoney);
+            return ConversionResult.Success(convertedMoney);
         }
         catch (MissingExchangeRateException missingExchangeRate)
         {
-            return Result.Failure<Money, MissingExchangeRateException>(missingExchangeRate);
+            return ConversionResult.Failure(missingExchangeRate);
         }
     }
+}
+
+public readonly struct ConversionResult
+{
+    private readonly Result<Money, MissingExchangeRateException> result;
+
+    private ConversionResult(Money money)
+        => result = Result.Success<Money, MissingExchangeRateException>(money);
+
+    private ConversionResult(MissingExchangeRateException exception)
+        => result = Result.Failure<Money, MissingExchangeRateException>(exception);
+
+    public MissingExchangeRateException Error
+        => result.Error;
+
+    public bool IsFailure
+        => result.IsFailure;
+
+    public Money Money
+        => result.Value;
+
+    public static ConversionResult Success(Money money)
+        => new(money);
+
+    public static ConversionResult Failure(MissingExchangeRateException exception)
+        => new(exception);
 }
