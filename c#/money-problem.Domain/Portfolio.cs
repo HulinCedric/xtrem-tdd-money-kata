@@ -1,4 +1,6 @@
-﻿namespace money_problem.Domain;
+﻿using CSharpFunctionalExtensions;
+
+namespace money_problem.Domain;
 
 public class Portfolio
 {
@@ -12,24 +14,37 @@ public class Portfolio
 
     public Money Evaluate(Bank bank, Currency currency)
     {
-        var totalAmount = 0d;
-        var missingExchangeRates = new List<MissingExchangeRateException>();
+        var conversionResults = moneys
+            .Select(money => Convert(bank, currency, money))
+            .ToList();
 
-        foreach (var money in moneys)
-            try
-            {
-                var convertedMoney = bank.Convert(money, currency);
-
-                totalAmount += convertedMoney.Amount;
-            }
-            catch (MissingExchangeRateException missingExchangeRate)
-            {
-                missingExchangeRates.Add(missingExchangeRate);
-            }
+        var missingExchangeRates = conversionResults
+            .Where(result => result.IsFailure)
+            .Select(failure => failure.Error)
+            .ToList();
 
         if (missingExchangeRates.Any())
             throw new MissingExchangeRatesException(missingExchangeRates);
 
+        var totalAmount = conversionResults
+            .Select(result => result.Value)
+            .Select(money => money.Amount)
+            .Sum();
+
         return new Money(totalAmount, currency);
+    }
+
+    private static Result<Money, MissingExchangeRateException> Convert(Bank bank, Currency currency, Money money)
+    {
+        try
+        {
+            var convertedMoney = bank.Convert(money, currency);
+
+            return Result.Success<Money, MissingExchangeRateException>(convertedMoney);
+        }
+        catch (MissingExchangeRateException missingExchangeRate)
+        {
+            return Result.Failure<Money, MissingExchangeRateException>(missingExchangeRate);
+        }
     }
 }
