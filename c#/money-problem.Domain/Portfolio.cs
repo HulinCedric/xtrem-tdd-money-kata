@@ -48,27 +48,22 @@ internal class ConversionResults
         => this.results = results;
 
     public Money Money(Currency currency)
-    {
-        var totalAmount = results
-            .Select(result => result.Money)
-            .Select(money => money.Amount)
-            .Sum();
-
-        return new Money(totalAmount, currency);
-    }
+        => new(
+            results
+                .Select(result => result.Money)
+                .Select(money => money.Amount)
+                .Sum(),
+            currency);
 
     public bool IsFailure()
         => results.Any(result => result.IsFailure);
 
     public MissingExchangeRatesException Error()
-    {
-        var missingExchangeRates = results
-            .Where(result => result.IsFailure)
-            .Select(failure => failure.Error)
-            .ToList();
-
-        return new MissingExchangeRatesException(missingExchangeRates);
-    }
+        => new(
+            results
+                .Where(result => result.IsFailure)
+                .Select(failure => failure.Error)
+                .ToList());
 }
 
 public readonly struct ConversionResult
