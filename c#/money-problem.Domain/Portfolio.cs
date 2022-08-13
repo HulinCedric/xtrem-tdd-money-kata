@@ -41,15 +41,15 @@ public class Portfolio
 }
 
 internal class ConversionResults
-    : List<ConversionResult>
 {
-    public ConversionResults(IEnumerable<ConversionResult> results) : base(results)
-    {
-    }
+    private readonly IEnumerable<ConversionResult> results;
+
+    public ConversionResults(IEnumerable<ConversionResult> results)
+        => this.results = results;
 
     public Money Money(Currency currency)
     {
-        var totalAmount = this
+        var totalAmount = results
             .Select(result => result.Money)
             .Select(money => money.Amount)
             .Sum();
@@ -58,11 +58,11 @@ internal class ConversionResults
     }
 
     public bool IsFailure()
-        => this.Any(result => result.IsFailure);
+        => results.Any(result => result.IsFailure);
 
     public MissingExchangeRatesException Error()
     {
-        var missingExchangeRates = this
+        var missingExchangeRates = results
             .Where(result => result.IsFailure)
             .Select(failure => failure.Error)
             .ToList();
