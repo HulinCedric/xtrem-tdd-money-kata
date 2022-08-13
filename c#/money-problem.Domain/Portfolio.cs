@@ -14,18 +14,14 @@ public class Portfolio
 
     public Money Evaluate(Bank bank, Currency currency)
     {
-        var conversionResults = moneys
-            .Select(money => Convert(bank, currency, money))
-            .ToList();
+        var conversionResults = ConvertMoneys(bank, currency);
+        if (IsFailure(conversionResults))
+            throw Error(conversionResults);
+        return Money(conversionResults, currency);
+    }
 
-        var missingExchangeRates = conversionResults
-            .Where(result => result.IsFailure)
-            .Select(failure => failure.Error)
-            .ToList();
-
-        if (missingExchangeRates.Any())
-            throw new MissingExchangeRatesException(missingExchangeRates);
-
+    private static Money Money(IEnumerable<ConversionResult> conversionResults, Currency currency)
+    {
         var totalAmount = conversionResults
             .Select(result => result.Money)
             .Select(money => money.Amount)
@@ -33,6 +29,24 @@ public class Portfolio
 
         return new Money(totalAmount, currency);
     }
+
+    private static MissingExchangeRatesException Error(IEnumerable<ConversionResult> conversionResults)
+    {
+        var missingExchangeRates = conversionResults
+            .Where(result => result.IsFailure)
+            .Select(failure => failure.Error)
+            .ToList();
+
+        return new MissingExchangeRatesException(missingExchangeRates);
+    }
+
+    private static bool IsFailure(IEnumerable<ConversionResult> conversionResults)
+        => conversionResults.Any(result => result.IsFailure);
+
+    private List<ConversionResult> ConvertMoneys(Bank bank, Currency currency)
+        => moneys
+            .Select(money => Convert(bank, currency, money))
+            .ToList();
 
     private static ConversionResult Convert(Bank bank, Currency currency, Money money)
     {
