@@ -1,6 +1,4 @@
-﻿using CSharpFunctionalExtensions;
-
-namespace money_problem.Domain;
+﻿namespace money_problem.Domain;
 
 public class Portfolio
 {
@@ -39,60 +37,4 @@ public class Portfolio
             return ConversionResult.Failure(missingExchangeRate);
         }
     }
-}
-
-internal class ConversionResults
-{
-    private readonly List<ConversionResult> results;
-    private readonly Currency toCurrency;
-
-    public ConversionResults(IEnumerable<ConversionResult> results, Currency toCurrency)
-    {
-        this.toCurrency = toCurrency;
-        this.results = results.ToList();
-    }
-
-    public MissingExchangeRatesException Error
-        => new(
-            results
-                .Where(result => result.IsFailure)
-                .Select(failure => failure.Error)
-                .ToList());
-
-    public bool IsFailure
-        => results.Any(result => result.IsFailure);
-
-    public Money Money
-        => new(
-            results
-                .Select(result => result.Money)
-                .Select(money => money.Amount)
-                .Sum(),
-            toCurrency);
-}
-
-public readonly struct ConversionResult
-{
-    private readonly Result<Money, MissingExchangeRateException> result;
-
-    private ConversionResult(Money money)
-        => result = Result.Success<Money, MissingExchangeRateException>(money);
-
-    private ConversionResult(MissingExchangeRateException exception)
-        => result = Result.Failure<Money, MissingExchangeRateException>(exception);
-
-    public MissingExchangeRateException Error
-        => result.Error;
-
-    public bool IsFailure
-        => result.IsFailure;
-
-    public Money Money
-        => result.Value;
-
-    public static ConversionResult Success(Money money)
-        => new(money);
-
-    public static ConversionResult Failure(MissingExchangeRateException exception)
-        => new(exception);
 }
