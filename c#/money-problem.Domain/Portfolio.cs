@@ -17,13 +17,14 @@ public class Portfolio
         var conversionResults = ConvertMoneys(bank, currency);
         if (conversionResults.IsFailure())
             throw conversionResults.Error();
-        return conversionResults.Money(currency);
+        return conversionResults.Money();
     }
 
     private ConversionResults ConvertMoneys(Bank bank, Currency currency)
         => new(
             moneys
-                .Select(money => Convert(bank, currency, money)));
+                .Select(money => Convert(bank, currency, money)),
+            currency);
 
     private static ConversionResult Convert(Bank bank, Currency currency, Money money)
     {
@@ -42,18 +43,22 @@ public class Portfolio
 
 internal class ConversionResults
 {
-    private readonly IEnumerable<ConversionResult> results;
+    private readonly List<ConversionResult> results;
+    private readonly Currency toCurrency;
 
-    public ConversionResults(IEnumerable<ConversionResult> results)
-        => this.results = results;
+    public ConversionResults(IEnumerable<ConversionResult> results, Currency toCurrency)
+    {
+        this.toCurrency = toCurrency;
+        this.results = results.ToList();
+    }
 
-    public Money Money(Currency currency)
+    public Money Money()
         => new(
             results
                 .Select(result => result.Money)
                 .Select(money => money.Amount)
                 .Sum(),
-            currency);
+            toCurrency);
 
     public bool IsFailure()
         => results.Any(result => result.IsFailure);
