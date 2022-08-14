@@ -1,14 +1,24 @@
-﻿namespace money_problem.Domain;
+﻿using System.Collections.Immutable;
+
+namespace money_problem.Domain;
 
 public class Portfolio
 {
-    private readonly List<Money> moneys;
+    private readonly IReadOnlyList<Money> moneys;
 
-    public Portfolio()
-        => moneys = new List<Money>();
+    public Portfolio() : this(new List<Money>())
+    {
+    }
 
-    public void Add(Money money)
-        => moneys.Add(money);
+    private Portfolio(IEnumerable<Money> moneys)
+        => this.moneys = moneys.ToImmutableList();
+
+
+    public Portfolio Add(Money money)
+    {
+        var newMoneys = new List<Money>(moneys) { money };
+        return new Portfolio(newMoneys);
+    }
 
     public Money Evaluate(Bank bank, Currency currency)
     {
