@@ -45,10 +45,10 @@ public class PortfolioShould
     public void AddMoneyInDollarAndMultipleInEuros()
     {
         // Arrange
-        var portfolio = Portfolio.Empty
-            .Add(5d.Dollars())
-            .Add(10d.Euros())
-            .Add(4d.Euros());
+        var portfolio = Portfolio.WithMoneys(
+            5d.Dollars(),
+            10d.Euros(),
+            4d.Euros());
 
         // Act
         var evaluation = portfolio.Evaluate(bank, USD);
@@ -61,9 +61,9 @@ public class PortfolioShould
     public void AddMoneyInSameCurrency()
     {
         // Arrange
-        var portfolio = Portfolio.Empty
-            .Add(5d.Dollars())
-            .Add(10d.Dollars());
+        var portfolio = Portfolio.WithMoneys(
+            5d.Dollars(),
+            10d.Dollars());
 
         // Act
         var evaluation = portfolio.Evaluate(bank, USD);
@@ -76,10 +76,10 @@ public class PortfolioShould
     public void ThrowAMissingExchangeRatesException()
     {
         // Arrange
-        var portfolio = Portfolio.Empty
-            .Add(1d.Euros())
-            .Add(1d.Dollars())
-            .Add(1d.KoreanWons());
+        var portfolio = Portfolio.WithMoneys(
+            1d.Euros(),
+            1d.Dollars(),
+            1d.KoreanWons());
 
         // Act
         var act = () => portfolio.Evaluate(bank, EUR);

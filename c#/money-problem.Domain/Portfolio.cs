@@ -16,6 +16,9 @@ public class Portfolio
     public static Portfolio Empty
         => new();
 
+    public static Portfolio WithMoneys(params Money[] moneys)
+        => new(moneys);
+
     public Portfolio Add(Money money)
     {
         var newMoneys = new List<Money>(moneys) { money };
