@@ -2,7 +2,7 @@ using CSharpFunctionalExtensions;
 
 namespace money_problem.Domain;
 
-internal readonly struct ConversionResult
+public readonly struct ConversionResult
 {
     private readonly Result<Money, MissingExchangeRateException> result;
 
@@ -18,7 +18,10 @@ internal readonly struct ConversionResult
     internal bool IsFailure
         => result.IsFailure;
 
-    internal MissingExchangeRateException Error
+    public string Error
+        => result.Error.Message;
+    
+    internal MissingExchangeRateException Exception
         => result.Error;
 
     internal Money Money

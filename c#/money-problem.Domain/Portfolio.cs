@@ -38,7 +38,7 @@ public class Portfolio
     {
         try
         {
-            var convertedMoney = bank.Convert(money, currency);
+            var convertedMoney = bank.ConvertWithException(money, currency);
 
             return ConversionResult.Success(convertedMoney);
         }

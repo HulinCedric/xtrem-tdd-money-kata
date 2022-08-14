@@ -26,7 +26,19 @@ namespace money_problem.Domain
         private static string KeyFor(Currency from, Currency to)
             => $"{from}->{to}";
 
-        public Money Convert(Money from, Currency toCurrency)
+        public ConversionResult Convert(Money from, Currency toCurrency)
+        {
+            try
+            {
+                return ConversionResult.Success(ConvertWithException(from, toCurrency));
+            }
+            catch (MissingExchangeRateException missingExchangeRate)
+            {
+                return ConversionResult.Failure(missingExchangeRate);
+            }
+        }
+
+        public Money ConvertWithException(Money from, Currency toCurrency)
             => CanConvert(from.Currency, toCurrency)
                    ? ConvertSafely(from, toCurrency)
                    : throw new MissingExchangeRateException(from.Currency, toCurrency);
