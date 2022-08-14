@@ -25,11 +25,14 @@ public class Portfolio
         return new Portfolio(newMoneys);
     }
 
-    public Money Evaluate(Bank bank, Currency currency)
+    public ConversionResults Evaluate(Bank bank, Currency currency)
+        => ConvertMoneys(bank, currency);
+
+    public Money EvaluateWithException(Bank bank, Currency currency)
     {
-        var results = ConvertMoneys(bank, currency);
+        var results = Evaluate(bank, currency);
         return results.IsFailure
-                   ? throw results.Error
+                   ? throw results.Exception
                    : results.Money;
     }
 

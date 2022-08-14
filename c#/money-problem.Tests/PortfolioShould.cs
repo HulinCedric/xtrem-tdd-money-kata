@@ -20,7 +20,7 @@ public class PortfolioShould
             .Add(10d.Euros());
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, USD);
+        var evaluation = portfolio.EvaluateWithException(bank, USD);
 
         // Assert
         evaluation.Should().Be(17d.Dollars());
@@ -35,7 +35,7 @@ public class PortfolioShould
             .Add(1100d.KoreanWons());
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, KRW);
+        var evaluation = portfolio.EvaluateWithException(bank, KRW);
 
         // Assert
         evaluation.Should().Be(2200d.KoreanWons());
@@ -51,7 +51,7 @@ public class PortfolioShould
             4d.Euros());
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, USD);
+        var evaluation = portfolio.EvaluateWithException(bank, USD);
 
         // Assert
         evaluation.Should().Be(21.8d.Dollars());
@@ -66,7 +66,7 @@ public class PortfolioShould
             10d.Dollars());
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, USD);
+        var evaluation = portfolio.EvaluateWithException(bank, USD);
 
         // Assert
         evaluation.Should().Be(15d.Dollars());
@@ -82,12 +82,10 @@ public class PortfolioShould
             1d.KoreanWons());
 
         // Act
-        var act = () => portfolio.Evaluate(bank, EUR);
+        var evaluation = portfolio.Evaluate(bank, EUR);
 
         // Assert
-        act.Should()
-            .ThrowExactly<MissingExchangeRatesException>()
-            .WithMessage("Missing exchange rate(s): [USD->EUR],[KRW->EUR]");
+        evaluation.Error.Should().Be("Missing exchange rate(s): [USD->EUR],[KRW->EUR]");
     }
 
     [Fact(DisplayName = "Empty = 0 USD")]
@@ -97,7 +95,7 @@ public class PortfolioShould
         var portfolio = Portfolio.Empty;
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, USD);
+        var evaluation = portfolio.EvaluateWithException(bank, USD);
 
         // Assert
         evaluation.Should().Be(0d.Dollars());
