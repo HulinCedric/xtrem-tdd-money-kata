@@ -11,18 +11,20 @@ namespace money_problem.Tests
 
         [Fact(DisplayName = "10 EUR -> USD = 12 USD")]
         public void ConvertEuroToUsd()
-            => bank.ConvertWithException(10d.Euros(), USD)
+            => bank.Convert(10d.Euros(), USD)
+                .Money
                 .Should()
                 .Be(12d.Dollars());
 
         [Fact(DisplayName = "10 EUR -> EUR = 10 EUR")]
         public void ConvertMoneyInSameCurrency()
-            => bank.ConvertWithException(10d.Euros(), EUR)
+            => bank.Convert(10d.Euros(), EUR)
+                .Money
                 .Should()
                 .Be(10d.Euros());
 
-        [Fact(DisplayName = "Throws a MissingExchangeRateException in case of missing exchange rates")]
-        public void ConvertWithMissingExchangeRateShouldThrowException()
+        [Fact(DisplayName = "Returns a missing exchange rate failure")]
+        public void ConvertWithMissingExchangeRateShouldReturnsFailure()
             => bank.Convert(10d.Euros(), KRW)
                 .Error
                 .Should()
@@ -31,12 +33,14 @@ namespace money_problem.Tests
         [Fact(DisplayName = "Conversion with different exchange rates EUR -> USD")]
         public void ConvertWithDifferentExchangeRates()
         {
-            bank.ConvertWithException(10d.Euros(), USD)
+            bank.Convert(10d.Euros(), USD)
+                .Money
                 .Should()
                 .Be(12d.Dollars());
 
             bank.AddExchangeRate(EUR, USD, 1.3)
-                .ConvertWithException(10d.Euros(), USD)
+                .Convert(10d.Euros(), USD)
+                .Money
                 .Should()
                 .Be(13d.Dollars());
         }

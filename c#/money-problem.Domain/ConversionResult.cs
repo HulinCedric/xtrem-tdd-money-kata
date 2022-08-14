@@ -21,7 +21,7 @@ public readonly struct ConversionResult
     public string Error
         => result.Error;
 
-    internal Money Money
+    public Money Money
         => result.Value;
 
     internal static ConversionResult Success(Money money)

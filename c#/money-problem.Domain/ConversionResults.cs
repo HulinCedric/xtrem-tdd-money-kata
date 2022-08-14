@@ -17,7 +17,11 @@ public class ConversionResults
         => $"Missing exchange rate(s): {MissingExchangeRates}";
 
     private string MissingExchangeRates
-        => GetMissingExchangeRates(results.Where(result => result.IsFailure).Select(failure => failure.Error).ToList());
+        => GetMissingExchangeRates(
+            results
+                .Where(result => result.IsFailure)
+                .Select(failure => failure.Error)
+                .ToList());
 
     public Money Money
         => new(

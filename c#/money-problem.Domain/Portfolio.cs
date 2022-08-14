@@ -31,20 +31,6 @@ public class Portfolio
     private ConversionResults ConvertMoneys(Bank bank, Currency currency)
         => new(
             moneys
-                .Select(money => Convert(bank, currency, money)),
+                .Select(money => bank.Convert(money, currency)),
             currency);
-
-    private static ConversionResult Convert(Bank bank, Currency currency, Money money)
-    {
-        try
-        {
-            var convertedMoney = bank.ConvertWithException(money, currency);
-
-            return ConversionResult.Success(convertedMoney);
-        }
-        catch (MissingExchangeRateException missingExchangeRate)
-        {
-            return ConversionResult.Failure(missingExchangeRate.Message);
-        }
-    }
 }
