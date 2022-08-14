@@ -28,12 +28,9 @@ namespace money_problem.Domain
             => $"{from}->{to}";
 
         public Either<string, Money> Convert(Money from, Currency toCurrency)
-        {
-            var conversionResult = ConvertWithConversionResult(from, toCurrency);
-            return conversionResult.IsFailure ?
-                       Either<string, Money>.Left(conversionResult.Error) :
-                       Either<string, Money>.Right(conversionResult.Money);
-        }
+            => CanConvert(from.Currency, toCurrency) ?
+                   Either<string, Money>.Right(ConvertSafely(from, toCurrency)) :
+                   Either<string, Money>.Left(KeyFor(from.Currency, toCurrency));
 
         public ConversionResult ConvertWithConversionResult(Money from, Currency toCurrency)
             => CanConvert(from.Currency, toCurrency)

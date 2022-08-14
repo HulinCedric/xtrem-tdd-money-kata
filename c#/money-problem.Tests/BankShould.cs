@@ -1,4 +1,3 @@
-using FluentAssertions;
 using FluentAssertions.LanguageExt;
 using money_problem.Domain;
 using Xunit;
@@ -18,29 +17,25 @@ namespace money_problem.Tests
 
         [Fact(DisplayName = "10 EUR -> EUR = 10 EUR")]
         public void ConvertMoneyInSameCurrency()
-            => bank.ConvertWithConversionResult(10d.Euros(), EUR)
-                .Money
+            => bank.Convert(10d.Euros(), EUR)
                 .Should()
                 .Be(10d.Euros());
 
         [Fact(DisplayName = "Returns a missing exchange rate failure")]
         public void ConvertWithMissingExchangeRateShouldReturnsFailure()
-            => bank.ConvertWithConversionResult(10d.Euros(), KRW)
-                .Error
+            => bank.Convert(10d.Euros(), KRW)
                 .Should()
                 .Be($"{EUR}->{KRW}");
 
         [Fact(DisplayName = "Conversion with different exchange rates EUR -> USD")]
         public void ConvertWithDifferentExchangeRates()
         {
-            bank.ConvertWithConversionResult(10d.Euros(), USD)
-                .Money
+            bank.Convert(10d.Euros(), USD)
                 .Should()
                 .Be(12d.Dollars());
 
             bank.AddExchangeRate(EUR, USD, 1.3)
-                .ConvertWithConversionResult(10d.Euros(), USD)
-                .Money
+                .Convert(10d.Euros(), USD)
                 .Should()
                 .Be(13d.Dollars());
         }
