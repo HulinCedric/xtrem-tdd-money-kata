@@ -20,9 +20,6 @@ public readonly struct ConversionResult
 
     public string Error
         => result.Error.Message;
-    
-    internal MissingExchangeRateException Exception
-        => result.Error;
 
     internal Money Money
         => result.Value;

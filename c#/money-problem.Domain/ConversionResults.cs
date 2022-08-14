@@ -17,7 +17,7 @@ public class ConversionResults
         => $"Missing exchange rate(s): {MissingExchangeRates}";
 
     private string MissingExchangeRates
-        => GetMissingExchangeRates(results.Where(result => result.IsFailure).Select(failure => failure.Exception).ToList());
+        => GetMissingExchangeRates(results.Where(result => result.IsFailure).Select(failure => failure.Error).ToList());
 
     public Money Money
         => new(
@@ -26,8 +26,8 @@ public class ConversionResults
                 .Sum(result => result.Money.Amount),
             toCurrency);
 
-    private static string GetMissingExchangeRates(IEnumerable<MissingExchangeRateException> missingExchangeRates)
+    private static string GetMissingExchangeRates(IEnumerable<string> missingExchangeRates)
         => missingExchangeRates
-            .Select(missingExchangeRate => $"[{missingExchangeRate.Message}]")
+            .Select(missingExchangeRate => $"[{missingExchangeRate}]")
             .Aggregate((ratesMessage, rateMessage) => $"{ratesMessage},{rateMessage}");
 }
