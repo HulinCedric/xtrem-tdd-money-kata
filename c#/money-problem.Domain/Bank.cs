@@ -1,25 +1,22 @@
-using System.Collections.Immutable;
 using LanguageExt;
 
 namespace money_problem.Domain
 {
     public sealed class Bank
     {
-        private readonly IReadOnlyDictionary<string, double> exchangeRates;
+        private readonly Map<string, double> exchangeRates;
 
-        private Bank(Dictionary<string, double> exchangeRates)
-            => this.exchangeRates = exchangeRates.ToImmutableDictionary();
+        private Bank(Map<string, double> exchangeRates)
+            => this.exchangeRates = exchangeRates;
 
         public static Bank WithExchangeRate(Currency from, Currency to, double rate)
-            => new Bank(new Dictionary<string, double>())
+            => new Bank(Map<string, double>.Empty)
                 .AddExchangeRate(from, to, rate);
 
         public Bank AddExchangeRate(Currency from, Currency to, double rate)
         {
-            var newExchangeRates = new Dictionary<string, double>(exchangeRates)
-            {
-                [KeyFor(from, to)] = rate
-            };
+            var newExchangeRates = exchangeRates
+                .AddOrUpdate(KeyFor(from, to), rate);
 
             return new Bank(newExchangeRates);
         }
