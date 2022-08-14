@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using LanguageExt;
 
 namespace money_problem.Domain
 {
@@ -26,7 +27,15 @@ namespace money_problem.Domain
         private static string KeyFor(Currency from, Currency to)
             => $"{from}->{to}";
 
-        public ConversionResult Convert(Money from, Currency toCurrency)
+        public Either<string, Money> Convert(Money from, Currency toCurrency)
+        {
+            var conversionResult = ConvertWithConversionResult(from, toCurrency);
+            return conversionResult.IsFailure ?
+                       Either<string, Money>.Left(conversionResult.Error) :
+                       Either<string, Money>.Right(conversionResult.Money);
+        }
+
+        public ConversionResult ConvertWithConversionResult(Money from, Currency toCurrency)
             => CanConvert(from.Currency, toCurrency)
                    ? ConversionResult.Success(ConvertSafely(from, toCurrency))
                    : ConversionResult.Failure(KeyFor(from.Currency, toCurrency));

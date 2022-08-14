@@ -29,7 +29,7 @@ public class Portfolio
     private ConversionResults ConvertMoneys(Bank bank, Currency currency)
         => new(
             moneys
-                .Select(money => bank.Convert(money, currency)),
+                .Select(money => bank.ConvertWithConversionResult(money, currency)),
             currency);
 
     public Either<string, Money> Evaluate(Bank bank, Currency currency)
