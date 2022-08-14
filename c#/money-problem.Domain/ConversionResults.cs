@@ -16,6 +16,9 @@ public class ConversionResults
     public string Error
         => $"Missing exchange rate(s): {MissingExchangeRates}";
 
+    public bool IsFailure
+        => results.Any(r => r.IsFailure);
+
     private string MissingExchangeRates
         => GetMissingExchangeRates(
             results

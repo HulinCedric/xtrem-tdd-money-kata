@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using FluentAssertions.LanguageExt;
 using money_problem.Domain;
 using Xunit;
 using static money_problem.Domain.Currency;
@@ -23,7 +24,7 @@ public class PortfolioShould
         var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Money.Should().Be(17d.Dollars());
+        evaluation.Should().Be(17d.Dollars());
     }
 
     [Fact(DisplayName = "1 USD + 1100 KRW = 2200 KRW")]
@@ -35,7 +36,7 @@ public class PortfolioShould
             .Add(1100d.KoreanWons());
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, KRW);
+        var evaluation = portfolio.EvaluateWithConversionResult(bank, KRW);
 
         // Assert
         evaluation.Money.Should().Be(2200d.KoreanWons());
@@ -51,7 +52,7 @@ public class PortfolioShould
             4d.Euros());
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, USD);
+        var evaluation = portfolio.EvaluateWithConversionResult(bank, USD);
 
         // Assert
         evaluation.Money.Should().Be(21.8d.Dollars());
@@ -66,7 +67,7 @@ public class PortfolioShould
             10d.Dollars());
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, USD);
+        var evaluation = portfolio.EvaluateWithConversionResult(bank, USD);
 
         // Assert
         evaluation.Money.Should().Be(15d.Dollars());
@@ -82,7 +83,7 @@ public class PortfolioShould
             1d.KoreanWons());
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, EUR);
+        var evaluation = portfolio.EvaluateWithConversionResult(bank, EUR);
 
         // Assert
         evaluation.Error.Should().Be("Missing exchange rate(s): [USD->EUR],[KRW->EUR]");
@@ -95,7 +96,7 @@ public class PortfolioShould
         var portfolio = Portfolio.Empty;
 
         // Act
-        var evaluation = portfolio.Evaluate(bank, USD);
+        var evaluation = portfolio.EvaluateWithConversionResult(bank, USD);
 
         // Assert
         evaluation.Money.Should().Be(0d.Dollars());
