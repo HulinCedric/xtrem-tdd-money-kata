@@ -25,22 +25,16 @@ namespace money_problem.Domain
             => $"{from}->{to}";
 
         public Either<string, Money> Convert(Money from, Currency toCurrency)
-            => CanConvert(from.Currency, toCurrency) ?
-                   Either<string, Money>.Right(ConvertSafely(from, toCurrency)) :
-                   Either<string, Money>.Left(KeyFor(from.Currency, toCurrency));
-
-        private Money ConvertSafely(Money from, Currency toCurrency)
         {
             if (toCurrency == from.Currency)
-                return from;
+                return Either<string, Money>.Right(from);
 
-            var exchangeRate = exchangeRates[KeyFor(from.Currency, toCurrency)];
-            var toAmount = from.Amount * exchangeRate;
+            var conversionName = KeyFor(from.Currency, toCurrency);
 
-            return new Money(toAmount, toCurrency);
+            return exchangeRates
+                .Find(conversionName)
+                .Map(exchangeRate => new Money(from.Amount * exchangeRate, toCurrency))
+                .ToEither(defaultLeftValue: conversionName);
         }
-
-        private bool CanConvert(Currency from, Currency to)
-            => from == to || exchangeRates.ContainsKey(KeyFor(from, to));
     }
 }

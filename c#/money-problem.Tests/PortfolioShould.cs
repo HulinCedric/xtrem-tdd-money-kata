@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using FluentAssertions.LanguageExt;
+﻿using FluentAssertions.LanguageExt;
 using money_problem.Domain;
 using Xunit;
 using static money_problem.Domain.Currency;
