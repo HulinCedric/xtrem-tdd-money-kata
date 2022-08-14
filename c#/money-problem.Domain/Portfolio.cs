@@ -26,21 +26,32 @@ public class Portfolio
         return new Portfolio(newMoneys);
     }
 
-    private ConversionResults ConvertMoneys(Bank bank, Currency currency)
-    {
-        var conversionResults = moneys
-            .Select(money => bank.Convert(money, currency));
-
-        return new ConversionResults(
-            conversionResults,
-            currency);
-    }
+    private List<Either<string, Money>> ConvertMoneys(Bank bank, Currency currency)
+        => moneys
+            .Select(money => bank.Convert(money, currency))
+            .ToList();
 
     public Either<string, Money> Evaluate(Bank bank, Currency currency)
     {
         var conversionResult = ConvertMoneys(bank, currency);
-        return conversionResult.IsFailure
-                   ? Either<string, Money>.Left(conversionResult.Error)
-                   : Either<string, Money>.Right(conversionResult.Money);
+        return ContainsFailure(conversionResult)
+                   ? Either<string, Money>.Left(ToFailure(conversionResult))
+                   : Either<string, Money>.Right(ToSuccess(conversionResult, currency));
     }
+
+    private static bool ContainsFailure(IEnumerable<Either<string, Money>> results)
+        => results.Any(result => result.IsLeft);
+
+    private static string GetMissingExchangeRates(IEnumerable<string> missingExchangeRates)
+        => missingExchangeRates
+            .Select(missingExchangeRate => $"[{missingExchangeRate}]")
+            .Aggregate((ratesMessage, rateMessage) => $"{ratesMessage},{rateMessage}");
+
+    private static string ToFailure(IEnumerable<Either<string, Money>> results)
+        => $"Missing exchange rate(s): {GetMissingExchangeRates(results.Lefts())}";
+
+    private static Money ToSuccess(IEnumerable<Either<string, Money>> results, Currency toCurrency)
+        => new(
+            results.Rights().Sum(money => money.Amount),
+            toCurrency);
 }
