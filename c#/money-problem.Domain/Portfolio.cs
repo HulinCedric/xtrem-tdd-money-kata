@@ -6,13 +6,15 @@ public class Portfolio
 {
     private readonly IReadOnlyList<Money> moneys;
 
-    public Portfolio() : this(new List<Money>())
+    private Portfolio() : this(new List<Money>())
     {
     }
 
     private Portfolio(IEnumerable<Money> moneys)
         => this.moneys = moneys.ToImmutableList();
 
+    public static Portfolio Empty
+        => new();
 
     public Portfolio Add(Money money)
     {
