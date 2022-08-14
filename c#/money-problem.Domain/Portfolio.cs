@@ -1,35 +1,26 @@
-﻿using System.Collections.Immutable;
-using LanguageExt;
+﻿using LanguageExt;
 
 namespace money_problem.Domain;
 
 public class Portfolio
 {
-    private readonly IReadOnlyList<Money> moneys;
+    private readonly Seq<Money> moneys;
 
-    private Portfolio() : this(new List<Money>())
+    private Portfolio() : this(Seq<Money>.Empty)
     {
     }
 
-    private Portfolio(IEnumerable<Money> moneys)
-        => this.moneys = moneys.ToImmutableList();
+    private Portfolio(Seq<Money> moneys)
+        => this.moneys = moneys;
 
     public static Portfolio Empty
         => new();
 
     public static Portfolio WithMoneys(params Money[] moneys)
-        => new(moneys);
+        => new(moneys.ToSeq());
 
     public Portfolio Add(Money money)
-    {
-        var newMoneys = new List<Money>(moneys) { money };
-        return new Portfolio(newMoneys);
-    }
-
-    private List<Either<string, Money>> ConvertMoneys(Bank bank, Currency currency)
-        => moneys
-            .Select(money => bank.Convert(money, currency))
-            .ToList();
+        => new(moneys.Add(money));
 
     public Either<string, Money> Evaluate(Bank bank, Currency currency)
     {
@@ -38,6 +29,11 @@ public class Portfolio
                    ? Either<string, Money>.Left(ToFailure(conversionResult))
                    : Either<string, Money>.Right(ToSuccess(conversionResult, currency));
     }
+
+    private List<Either<string, Money>> ConvertMoneys(Bank bank, Currency currency)
+        => moneys
+            .Select(money => bank.Convert(money, currency))
+            .ToList();
 
     private static bool ContainsFailure(IEnumerable<Either<string, Money>> results)
         => results.Any(result => result.IsLeft);
