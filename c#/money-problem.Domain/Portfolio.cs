@@ -26,9 +26,6 @@ public class Portfolio
         return new Portfolio(newMoneys);
     }
 
-    public ConversionResults EvaluateWithConversionResult(Bank bank, Currency currency)
-        => ConvertMoneys(bank, currency);
-
     private ConversionResults ConvertMoneys(Bank bank, Currency currency)
         => new(
             moneys
@@ -37,7 +34,7 @@ public class Portfolio
 
     public Either<string, Money> Evaluate(Bank bank, Currency currency)
     {
-        var conversionResult = EvaluateWithConversionResult(bank, currency);
+        var conversionResult = ConvertMoneys(bank, currency);
         return conversionResult.IsFailure
                    ? Either<string, Money>.Left(conversionResult.Error)
                    : Either<string, Money>.Right(conversionResult.Money);

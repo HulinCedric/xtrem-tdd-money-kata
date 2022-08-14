@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace money_problem.Domain;
 
-public class ConversionResults
+internal class ConversionResults
 {
     private readonly IReadOnlyList<ConversionResult> results;
     private readonly Currency toCurrency;
@@ -13,10 +13,10 @@ public class ConversionResults
         this.results = results.ToImmutableList();
     }
 
-    public string Error
+    internal string Error
         => $"Missing exchange rate(s): {MissingExchangeRates}";
 
-    public bool IsFailure
+    internal bool IsFailure
         => results.Any(r => r.IsFailure);
 
     private string MissingExchangeRates
@@ -26,7 +26,7 @@ public class ConversionResults
                 .Select(failure => failure.Error)
                 .ToList());
 
-    public Money Money
+    internal Money Money
         => new(
             results
                 .Where(result => result.IsSuccess)

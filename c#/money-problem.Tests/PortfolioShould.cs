@@ -36,10 +36,10 @@ public class PortfolioShould
             .Add(1100d.KoreanWons());
 
         // Act
-        var evaluation = portfolio.EvaluateWithConversionResult(bank, KRW);
+        var evaluation = portfolio.Evaluate(bank, KRW);
 
         // Assert
-        evaluation.Money.Should().Be(2200d.KoreanWons());
+        evaluation.Should().Be(2200d.KoreanWons());
     }
 
     [Fact(DisplayName = "5 USD + 10 EUR + 4 EUR = 21.8 USD")]
@@ -52,10 +52,10 @@ public class PortfolioShould
             4d.Euros());
 
         // Act
-        var evaluation = portfolio.EvaluateWithConversionResult(bank, USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Money.Should().Be(21.8d.Dollars());
+        evaluation.Should().Be(21.8d.Dollars());
     }
 
     [Fact(DisplayName = "5 USD + 10 USD = 15 USD")]
@@ -67,10 +67,10 @@ public class PortfolioShould
             10d.Dollars());
 
         // Act
-        var evaluation = portfolio.EvaluateWithConversionResult(bank, USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Money.Should().Be(15d.Dollars());
+        evaluation.Should().Be(15d.Dollars());
     }
 
     [Fact(DisplayName = "Return missing exchange rates failure")]
@@ -83,10 +83,10 @@ public class PortfolioShould
             1d.KoreanWons());
 
         // Act
-        var evaluation = portfolio.EvaluateWithConversionResult(bank, EUR);
+        var evaluation = portfolio.Evaluate(bank, EUR);
 
         // Assert
-        evaluation.Error.Should().Be("Missing exchange rate(s): [USD->EUR],[KRW->EUR]");
+        evaluation.Should().Be("Missing exchange rate(s): [USD->EUR],[KRW->EUR]");
     }
 
     [Fact(DisplayName = "Empty = 0 USD")]
@@ -96,9 +96,9 @@ public class PortfolioShould
         var portfolio = Portfolio.Empty;
 
         // Act
-        var evaluation = portfolio.EvaluateWithConversionResult(bank, USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Money.Should().Be(0d.Dollars());
+        evaluation.Should().Be(0d.Dollars());
     }
 }
