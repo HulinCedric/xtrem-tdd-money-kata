@@ -34,7 +34,7 @@ namespace money_problem.Domain
             }
             catch (MissingExchangeRateException missingExchangeRate)
             {
-                return ConversionResult.Failure(missingExchangeRate);
+                return ConversionResult.Failure(missingExchangeRate.Message);
             }
         }
 

@@ -4,14 +4,14 @@ namespace money_problem.Domain;
 
 public readonly struct ConversionResult
 {
-    private readonly Result<Money, MissingExchangeRateException> result;
+    private readonly Result<Money, string> result;
 
     private ConversionResult(Money money)
-        => result = Result.Success<Money, MissingExchangeRateException>(money);
+        => result = Result.Success<Money, string>(money);
 
-    private ConversionResult(MissingExchangeRateException exception)
-        => result = Result.Failure<Money, MissingExchangeRateException>(exception);
-    
+    private ConversionResult(string reason)
+        => result = Result.Failure<Money, string>(reason);
+
     internal bool IsSuccess
         => result.IsSuccess;
 
@@ -19,7 +19,7 @@ public readonly struct ConversionResult
         => result.IsFailure;
 
     public string Error
-        => result.Error.Message;
+        => result.Error;
 
     internal Money Money
         => result.Value;
@@ -27,6 +27,6 @@ public readonly struct ConversionResult
     internal static ConversionResult Success(Money money)
         => new(money);
 
-    internal static ConversionResult Failure(MissingExchangeRateException exception)
-        => new(exception);
+    internal static ConversionResult Failure(string reason)
+        => new(reason);
 }

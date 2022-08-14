@@ -44,7 +44,7 @@ public class Portfolio
         }
         catch (MissingExchangeRateException missingExchangeRate)
         {
-            return ConversionResult.Failure(missingExchangeRate);
+            return ConversionResult.Failure(missingExchangeRate.Message);
         }
     }
 }
