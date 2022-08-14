@@ -28,14 +28,6 @@ public class Portfolio
     public ConversionResults Evaluate(Bank bank, Currency currency)
         => ConvertMoneys(bank, currency);
 
-    public Money EvaluateWithException(Bank bank, Currency currency)
-    {
-        var results = Evaluate(bank, currency);
-        return results.IsFailure
-                   ? throw results.Exception
-                   : results.Money;
-    }
-
     private ConversionResults ConvertMoneys(Bank bank, Currency currency)
         => new(
             moneys

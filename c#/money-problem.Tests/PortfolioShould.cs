@@ -20,10 +20,10 @@ public class PortfolioShould
             .Add(10d.Euros());
 
         // Act
-        var evaluation = portfolio.EvaluateWithException(bank, USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(17d.Dollars());
+        evaluation.Money.Should().Be(17d.Dollars());
     }
 
     [Fact(DisplayName = "1 USD + 1100 KRW = 2200 KRW")]
@@ -35,10 +35,10 @@ public class PortfolioShould
             .Add(1100d.KoreanWons());
 
         // Act
-        var evaluation = portfolio.EvaluateWithException(bank, KRW);
+        var evaluation = portfolio.Evaluate(bank, KRW);
 
         // Assert
-        evaluation.Should().Be(2200d.KoreanWons());
+        evaluation.Money.Should().Be(2200d.KoreanWons());
     }
 
     [Fact(DisplayName = "5 USD + 10 EUR + 4 EUR = 21.8 USD")]
@@ -51,10 +51,10 @@ public class PortfolioShould
             4d.Euros());
 
         // Act
-        var evaluation = portfolio.EvaluateWithException(bank, USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(21.8d.Dollars());
+        evaluation.Money.Should().Be(21.8d.Dollars());
     }
 
     [Fact(DisplayName = "5 USD + 10 USD = 15 USD")]
@@ -66,14 +66,14 @@ public class PortfolioShould
             10d.Dollars());
 
         // Act
-        var evaluation = portfolio.EvaluateWithException(bank, USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(15d.Dollars());
+        evaluation.Money.Should().Be(15d.Dollars());
     }
 
-    [Fact(DisplayName = "Throws a MissingExchangeRatesException in case of missing exchange rates")]
-    public void ThrowAMissingExchangeRatesException()
+    [Fact(DisplayName = "Return missing exchange rates failure")]
+    public void ReturnsMissingExchangeRatesFailure()
     {
         // Arrange
         var portfolio = Portfolio.WithMoneys(
@@ -95,9 +95,9 @@ public class PortfolioShould
         var portfolio = Portfolio.Empty;
 
         // Act
-        var evaluation = portfolio.EvaluateWithException(bank, USD);
+        var evaluation = portfolio.Evaluate(bank, USD);
 
         // Assert
-        evaluation.Should().Be(0d.Dollars());
+        evaluation.Money.Should().Be(0d.Dollars());
     }
 }

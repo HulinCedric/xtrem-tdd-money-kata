@@ -15,28 +15,16 @@ public class ConversionResults
 
     public string Error
         => $"Missing exchange rate(s): {MissingExchangeRates}";
-    
-    public MissingExchangeRatesException Exception
-        => new(
-            results
-                .Where(result => result.IsFailure)
-                .Select(failure => failure.Error)
-                .ToList());
-
-    internal bool IsFailure
-        => results.Any(result => result.IsFailure);
 
     private string MissingExchangeRates
         => GetMissingExchangeRates(results.Where(result => result.IsFailure).Select(failure => failure.Error).ToList());
 
-
-    internal Money Money
+    public Money Money
         => new(
             results
                 .Where(result => result.IsSuccess)
                 .Sum(result => result.Money.Amount),
             toCurrency);
-
 
     private static string GetMissingExchangeRates(IEnumerable<MissingExchangeRateException> missingExchangeRates)
         => missingExchangeRates
