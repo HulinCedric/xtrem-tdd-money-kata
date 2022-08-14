@@ -2,7 +2,7 @@ using CSharpFunctionalExtensions;
 
 namespace money_problem.Domain;
 
-public readonly struct ConversionResult
+internal readonly struct ConversionResult
 {
     private readonly Result<Money, MissingExchangeRateException> result;
 
@@ -12,21 +12,21 @@ public readonly struct ConversionResult
     private ConversionResult(MissingExchangeRateException exception)
         => result = Result.Failure<Money, MissingExchangeRateException>(exception);
     
-    public bool IsSuccess
+    internal bool IsSuccess
         => result.IsSuccess;
 
-    public bool IsFailure
+    internal bool IsFailure
         => result.IsFailure;
 
-    public MissingExchangeRateException Error
+    internal MissingExchangeRateException Error
         => result.Error;
 
-    public Money Money
+    internal Money Money
         => result.Value;
 
-    public static ConversionResult Success(Money money)
+    internal static ConversionResult Success(Money money)
         => new(money);
 
-    public static ConversionResult Failure(MissingExchangeRateException exception)
+    internal static ConversionResult Failure(MissingExchangeRateException exception)
         => new(exception);
 }
