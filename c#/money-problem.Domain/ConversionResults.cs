@@ -1,14 +1,16 @@
+using System.Collections.Immutable;
+
 namespace money_problem.Domain;
 
 internal class ConversionResults
 {
-    private readonly List<ConversionResult> results;
+    private readonly IReadOnlyList<ConversionResult> results;
     private readonly Currency toCurrency;
 
     public ConversionResults(IEnumerable<ConversionResult> results, Currency toCurrency)
     {
         this.toCurrency = toCurrency;
-        this.results = results.ToList();
+        this.results = results.ToImmutableList();
     }
 
     public MissingExchangeRatesException Error
