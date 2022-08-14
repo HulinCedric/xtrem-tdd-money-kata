@@ -27,10 +27,14 @@ public class Portfolio
     }
 
     private ConversionResults ConvertMoneys(Bank bank, Currency currency)
-        => new(
-            moneys
-                .Select(money => bank.ConvertWithConversionResult(money, currency)),
+    {
+        var conversionResults = moneys
+            .Select(money => bank.Convert(money, currency));
+
+        return new ConversionResults(
+            conversionResults,
             currency);
+    }
 
     public Either<string, Money> Evaluate(Bank bank, Currency currency)
     {

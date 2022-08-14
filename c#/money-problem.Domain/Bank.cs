@@ -32,11 +32,6 @@ namespace money_problem.Domain
                    Either<string, Money>.Right(ConvertSafely(from, toCurrency)) :
                    Either<string, Money>.Left(KeyFor(from.Currency, toCurrency));
 
-        public ConversionResult ConvertWithConversionResult(Money from, Currency toCurrency)
-            => CanConvert(from.Currency, toCurrency)
-                   ? ConversionResult.Success(ConvertSafely(from, toCurrency))
-                   : ConversionResult.Failure(KeyFor(from.Currency, toCurrency));
-
         private Money ConvertSafely(Money from, Currency toCurrency)
         {
             if (toCurrency == from.Currency)
