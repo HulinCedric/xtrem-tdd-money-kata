@@ -23,6 +23,14 @@ public class BankProperties
         => bank = Bank.WithExchangeRates(exchangeRates.ToArray());
 
     [Property(DisplayName = "Round-Tripping in same currency")]
-    public Property ConvertInSameCurrencyShouldReturnOriginalMoney(Money money)
-        => (money == bank.Convert(money, money.Currency)).Label("Round-Tripping in same currency");
+    public Property ConvertInSameCurrencyShouldReturnOriginalMoney(Money originalMoney)
+        => (originalMoney == bank.Convert(originalMoney, originalMoney.Currency))
+            .Label("Round-Tripping in same currency");
+
+    [Property(DisplayName = "Round-Tripping in random currency")]
+    public Property RoundTripConversionShouldReturnOriginalMoney(Money originalMoney, Currency currency)
+        => (originalMoney ==
+            bank.Convert(originalMoney, currency)
+                .Bind(convertedMoney => bank.Convert(convertedMoney, originalMoney.Currency)))
+            .Label("Round-Tripping in random currency");
 }
