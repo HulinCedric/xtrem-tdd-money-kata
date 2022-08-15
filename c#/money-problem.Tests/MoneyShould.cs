@@ -19,5 +19,16 @@ namespace money_problem.Tests
                 .Divide(4)
                 .Should()
                 .Be(1000.5d.KoreanWons());
+
+        [Fact(DisplayName = "Equals with tolerance of 0.1")]
+        public void BeEqualWithTolerance()
+        {
+            // Arrange
+            var moneyA = 0.22350680544256452d.Euros();
+            var moneyB = 0.21928699695580886d.Euros();
+
+            // Assert
+            moneyA.Should().Be(moneyB);
+        }
     }
 }
