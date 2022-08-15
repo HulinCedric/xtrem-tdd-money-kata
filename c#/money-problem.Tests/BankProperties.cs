@@ -1,7 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
 using FsCheck;
 using FsCheck.Xunit;
+using LanguageExt;
 using money_problem.Domain;
 using static money_problem.Domain.Currency;
 
@@ -21,35 +20,16 @@ public class BankProperties
 {
     private readonly Bank bank;
 
-    private readonly Dictionary<(Currency From, Currency To), double> exchangeRates = new()
-    {
-        { (EUR, USD), 1.2 },
-        { (USD, EUR), 0.82 },
-        { (USD, KRW), 1100 },
-        { (KRW, USD), 0.0009 },
-        { (EUR, KRW), 1344 },
-        { (KRW, EUR), 0.00073 }
-    };
+    private readonly Seq<ExchangeRate> exchangeRates = Seq<ExchangeRate>.Empty
+        .Add(new ExchangeRate(EUR, USD, 1.2))
+        .Add(new ExchangeRate(USD, EUR, 0.82))
+        .Add(new ExchangeRate(USD, KRW, 1100))
+        .Add(new ExchangeRate(KRW, USD, 0.0009))
+        .Add(new ExchangeRate(EUR, KRW, 1344))
+        .Add(new ExchangeRate(KRW, EUR, 0.00073));
 
     public BankProperties()
-        => bank = BuildBankWithExchangeRates(exchangeRates);
-
-    private static Bank BuildBankWithExchangeRates(IDictionary<(Currency From, Currency To), double> exchangeRates)
-        => exchangeRates.Aggregate(
-            NewBank(exchangeRates),
-            (bank, exchangeRate) => bank.AddExchangeRate(
-                exchangeRate.Key.From,
-                exchangeRate.Key.To,
-                exchangeRate.Value));
-
-    private static Bank NewBank(IDictionary<(Currency From, Currency To), double> exchangeRates)
-    {
-        var firstExchangeRate = exchangeRates.First();
-        return Bank.WithExchangeRate(
-            firstExchangeRate.Key.From,
-            firstExchangeRate.Key.To,
-            firstExchangeRate.Value);
-    }
+        => bank = Bank.WithExchangeRates(exchangeRates.ToArray());
 
     [Property(DisplayName = "Round-Tripping in same currency")]
     public Property ConvertInSameCurrencyShouldReturnOriginalMoney(Money money)

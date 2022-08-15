@@ -1,4 +1,5 @@
 ﻿using FluentAssertions.LanguageExt;
+using LanguageExt;
 using money_problem.Domain;
 using Xunit;
 using static money_problem.Domain.Currency;
@@ -7,9 +8,14 @@ namespace money_problem.Tests;
 
 public class PortfolioShould
 {
-    private readonly Bank bank = Bank
-        .WithExchangeRate(EUR, USD, 1.2)
-        .AddExchangeRate(USD, KRW, 1100);
+    private readonly Bank bank;
+
+    private readonly Seq<ExchangeRate> exchangeRates = Seq<ExchangeRate>.Empty
+        .Add(new ExchangeRate(EUR, USD, 1.2))
+        .Add(new ExchangeRate(USD, KRW, 1100));
+
+    public PortfolioShould()
+        => bank = Bank.WithExchangeRates(exchangeRates.ToArray());
 
     [Fact(DisplayName = "5 USD + 10 EUR = 17 USD")]
     public void AddMoneyInDollarAndEuro()

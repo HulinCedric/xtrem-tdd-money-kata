@@ -7,7 +7,7 @@ namespace money_problem.Tests
 {
     public class BankShould
     {
-        private readonly Bank bank = Bank.WithExchangeRate(EUR, USD, 1.2);
+        private readonly Bank bank = Bank.WithExchangeRate(new ExchangeRate(EUR, USD, 1.2));
 
         [Fact(DisplayName = "10 EUR -> USD = 12 USD")]
         public void ConvertEuroToUsd()
@@ -34,7 +34,7 @@ namespace money_problem.Tests
                 .Should()
                 .Be(12d.Dollars());
 
-            bank.AddExchangeRate(EUR, USD, 1.3)
+            bank.AddExchangeRate(new ExchangeRate(EUR, USD, 1.3))
                 .Convert(10d.Euros(), USD)
                 .Should()
                 .Be(13d.Dollars());
