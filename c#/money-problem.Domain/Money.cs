@@ -4,6 +4,7 @@ public record Money(double Amount, Currency Currency)
 {
     private const double Tolerance = 0.1d;
 
+    public const int MaxDigits = 5;
     public const double MaxAmount = 1_000_000_000d;
     public const double MinAmount = -1_000_000_000d;
 
