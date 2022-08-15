@@ -12,11 +12,11 @@ public class BankProperties
     private readonly Bank bank;
 
     private readonly Seq<ExchangeRate> exchangeRates = Seq<ExchangeRate>.Empty
-        .Add(new ExchangeRate(EUR, USD, 1.2))
-        .Add(new ExchangeRate(USD, EUR, 0.82))
-        .Add(new ExchangeRate(USD, KRW, 1100))
-        .Add(new ExchangeRate(KRW, USD, 0.0009))
-        .Add(new ExchangeRate(EUR, KRW, 1344))
+        .Add(new ExchangeRate(EUR, USD, 1.0567))
+        .Add(new ExchangeRate(USD, EUR, 0.9466))
+        .Add(new ExchangeRate(USD, KRW, 1302.0811))
+        .Add(new ExchangeRate(KRW, USD, 0.00076801737))
+        .Add(new ExchangeRate(EUR, KRW, 1368.51779))
         .Add(new ExchangeRate(KRW, EUR, 0.00073));
 
     public BankProperties()
