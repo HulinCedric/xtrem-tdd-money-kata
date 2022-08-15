@@ -3,12 +3,13 @@
 public record Money(double Amount, Currency Currency)
 {
     private const double Tolerance = 0.1d;
+
     public const double MaxAmount = 1_000_000_000d;
     public const double MinAmount = -1_000_000_000d;
 
     public virtual bool Equals(Money? other)
         => other is not null &&
-           AmountAreEquals(Amount, other.Amount) &&
+           AreAmountEquals(Amount, other.Amount) &&
            Currency == other.Currency;
 
     public override int GetHashCode()
@@ -20,13 +21,13 @@ public record Money(double Amount, Currency Currency)
     public Money Divide(int divisor)
         => this with { Amount = Amount / divisor };
 
-    private static bool AmountAreEquals(double firstAmount, double secondAmount)
-        => EqualsWithTolerance(firstAmount, secondAmount, Tolerance);
-
-    private static bool EqualsWithTolerance(double x, double y, double tolerance)
+    private static bool AreAmountEquals(double firstAmount, double secondAmount)
     {
-        var difference = Math.Abs(x - y);
-        return difference <= tolerance ||
-               difference <= Math.Max(Math.Abs(x), Math.Abs(y)) * tolerance;
+        var amountDifference = Math.Abs(firstAmount - secondAmount);
+
+        return amountDifference <= GetTolerance(firstAmount);
     }
+
+    private static double GetTolerance(double firstAmount)
+        => Math.Abs(firstAmount * Tolerance);
 }

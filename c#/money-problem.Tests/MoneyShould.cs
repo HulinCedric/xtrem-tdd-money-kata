@@ -20,7 +20,7 @@ namespace money_problem.Tests
                 .Should()
                 .Be(1000.5d.KoreanWons());
 
-        [Fact(DisplayName = "Equals with tolerance of 0.1")]
+        [Fact(DisplayName = "Equals with relative tolerance of 0.1%")]
         public void BeEqualWithTolerance()
         {
             // Arrange
