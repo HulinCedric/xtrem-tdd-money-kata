@@ -1,7 +1,10 @@
+using FluentAssertions;
+using FluentAssertions.LanguageExt;
 using FsCheck;
 using FsCheck.Xunit;
 using LanguageExt;
 using money_problem.Domain;
+using Xunit;
 using static money_problem.Domain.Currency;
 
 namespace money_problem.Tests;
@@ -36,4 +39,19 @@ public class BankProperties
     private Either<string, Money> RoundTripConversion(Money originalMoney, Currency currency)
         => bank.Convert(originalMoney, currency)
             .Bind(convertedMoney => bank.Convert(convertedMoney, originalMoney.Currency));
+    
+    [Fact(DisplayName = "?")]
+    public void RoundTripFailure()
+    {
+        // Arrange
+        var originalMoney = new Money(double.PositiveInfinity, EUR);
+        var currency = KRW;
+
+        // Act
+        var roundTripMoney = RoundTripConversion(originalMoney, currency);
+
+        // Assert
+        roundTripMoney.Should().Be(originalMoney);
+    }
+    
 }
