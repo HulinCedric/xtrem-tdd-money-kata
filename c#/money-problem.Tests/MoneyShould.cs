@@ -20,12 +20,15 @@ namespace money_problem.Tests
                 .Should()
                 .Be(1000.5d.KoreanWons());
 
-        [Fact(DisplayName = "Equals with relative tolerance of 0.1%")]
-        public void BeEqualWithTolerance()
+        [Theory(DisplayName = "Equals with relative tolerance of 0.1%")]
+        [InlineData(10, 10.01)]
+        [InlineData(100, 100.1)]
+        [InlineData(1_000, 1_001)]
+        public void BeEqualWithRelativeTolerance(double amountA, double amountB)
         {
             // Arrange
-            var moneyA = 0.22350680544256452d.Euros();
-            var moneyB = 0.21928699695580886d.Euros();
+            var moneyA = amountA.Euros();
+            var moneyB = amountB.Euros();
 
             // Assert
             moneyA.Should().Be(moneyB);
